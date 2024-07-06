@@ -1,9 +1,11 @@
+import Navbar from "@/components/navbar";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <main>
-      <p>Hi</p>
-    </main>
+    <div>
+      <Navbar />
+      {/* <HeroSection /> */}
+    </div>
   );
 }
