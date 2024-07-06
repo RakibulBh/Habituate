@@ -62,13 +62,15 @@ export async function POST(req: Request) {
       clerkUserID: id,
       emailAddress: email_addresses[0].email_address,
     };
-    console.log("New user created:", newUser);
 
     try {
       await connectToDb();
       await User.create(newUser);
       console.log("User added to the database");
-    } catch (error) {}
+      console.log("New user created:", newUser);
+    } catch (error) {
+      console.error("Error adding user to the database:", error);
+    }
   }
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
   console.log("Webhook body:", body);
