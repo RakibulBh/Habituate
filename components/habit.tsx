@@ -9,7 +9,7 @@ const Habit = ({
   isCompleted: boolean;
 }) => {
   return (
-    <div className="px-4 py-3 flex items-center gap-x-4 bg-white rounded-xl">
+    <div className="hover:scale-105 transition-transform ease-in-out  px-4 py-3 flex items-center gap-x-4 bg-white rounded-xl">
       <div className="p-3 bg-yellow-200 rounded-full text-white">
         <Bed />
       </div>

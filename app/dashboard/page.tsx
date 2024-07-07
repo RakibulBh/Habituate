@@ -1,4 +1,5 @@
 "use client";
+import { AddHabitDialog } from "@/components/add-habit-dialog";
 import Habit from "@/components/habit";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -8,14 +9,14 @@ import React from "react";
 
 function Dashboard() {
   const { user } = useUser();
-  const habitsLeft = [
-    { name: "Exercise", isCompleted: false },
-    { name: "Read a book", isCompleted: false },
-  ];
 
   const completedHabits = [
     { name: "Drink water", isCompleted: true },
     { name: "Meditate", isCompleted: true },
+    { name: "Read", isCompleted: true },
+    { name: "Exercise", isCompleted: true },
+    { name: "Write", isCompleted: true },
+    { name: "Sleep", isCompleted: true },
   ];
 
   return (
@@ -35,7 +36,7 @@ function Dashboard() {
             </div>
           </div>
         </div>
-        <Button>Add a habit</Button>
+        <AddHabitDialog />
       </div>
       <div className="flex-grow bg-gray-100 rounded-md py-6 px-4 space-y-4">
         {completedHabits.map((habit, index) => (
