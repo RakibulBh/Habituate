@@ -64,11 +64,8 @@ export async function POST(req: Request) {
     };
 
     try {
-      console.log("connecting to datbase");
       await connectToDb();
-      console.log("Connected to the database");
       await User.create(newUser);
-      console.log("User added to the database");
       console.log("New user created:", newUser);
     } catch (error) {
       console.error("Error adding user to the database:", error);
