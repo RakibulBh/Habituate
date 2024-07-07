@@ -20,7 +20,7 @@ const menuItems = [
 
 const Sidebar = () => {
   return (
-    <div className="border-r-2 border-gray-200 h-screen p-6 w-64 flex flex-col justify-between bg-gray-100">
+    <div className="border-r-2 border-gray-200 h-screen p-6 flex flex-col justify-between bg-gray-100 w-[20rem]">
       <div>
         <div className="text-2xl font-bold text-[#6FBA88] mb-10">
           Habit Tracker

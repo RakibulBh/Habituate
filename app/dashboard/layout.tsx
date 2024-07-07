@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Sidebar from "@/components/sidebar";
 import RightSidebar from "@/components/right-sidebar";
+import ProgressCard from "@/components/top-bar";
+import { MobileSidebar } from "@/components/mobile-sidebar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,8 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <main className="flex">
-      <Sidebar />
-      {children}
+      <div className="hidden xl:block">
+        <Sidebar />
+      </div>
+      <div className="p-2 flex flex-col flex-1 gap-4">
+        <ProgressCard />
+        {children}
+      </div>
       <RightSidebar />
     </main>
   );
