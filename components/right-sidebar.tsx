@@ -1,12 +1,13 @@
 "use client";
 import React from "react";
 import { useUser } from "@clerk/nextjs"; // Assuming you're using Clerk's React package
+import HabitPieChart from "./piechart";
 
 const RightSidebar = () => {
   const { user } = useUser();
 
   return (
-    <div className="border-l-2 border-gray-200 h-screen p-6 w-64 flex flex-col justify-start bg-gray-100">
+    <div className="border-l-2 border-gray-200 h-screen p-6 w-[20rem] flex flex-col bg-gray-100">
       {/* Profile Section */}
       <div className="flex flex-col items-center mb-10">
         <img
@@ -20,11 +21,9 @@ const RightSidebar = () => {
       </div>
 
       {/* Progress Section */}
-      <div className="mb-10">
+      <div className="">
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Progress</h3>
-        <div className="w-full h-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">
-          Graph Placeholder
-        </div>
+        <HabitPieChart habitsCompleted={30} totalHabits={40} />
       </div>
 
       {/* Calendar Section */}

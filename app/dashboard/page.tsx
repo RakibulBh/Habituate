@@ -1,4 +1,5 @@
 "use client";
+import Habit from "@/components/habit";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { SignOutButton, useUser } from "@clerk/nextjs";
@@ -7,6 +8,15 @@ import React from "react";
 
 function Dashboard() {
   const { user } = useUser();
+  const habitsLeft = [
+    { name: "Exercise", isCompleted: false },
+    { name: "Read a book", isCompleted: false },
+  ];
+
+  const completedHabits = [
+    { name: "Drink water", isCompleted: true },
+    { name: "Meditate", isCompleted: true },
+  ];
 
   return (
     <section className="flex flex-col gap-4 h-full">
@@ -27,7 +37,15 @@ function Dashboard() {
         </div>
         <Button>Add a habit</Button>
       </div>
-      <div className="flex-grow bg-red-200 rounded-md"></div>
+      <div className="flex-grow bg-gray-100 rounded-md py-6 px-4 space-y-4">
+        {completedHabits.map((habit, index) => (
+          <Habit
+            key={index}
+            name={habit.name}
+            isCompleted={habit.isCompleted}
+          />
+        ))}
+      </div>
     </section>
   );
 }
