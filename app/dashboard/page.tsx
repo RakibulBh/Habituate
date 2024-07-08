@@ -3,11 +3,22 @@ import { AddHabitDialog } from "@/components/add-habit-dialog";
 import Habit from "@/components/habit";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
+import { format, addDays, subDays } from "date-fns";
 import { SignOutButton, useUser } from "@clerk/nextjs";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 function Dashboard() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const handlePreviousDay = () => {
+    setCurrentDate(subDays(currentDate, 1));
+  };
+
+  const handleNextDay = () => {
+    setCurrentDate(addDays(currentDate, 1));
+  };
+
   const { user } = useUser();
 
   const completedHabits = [
@@ -24,14 +35,20 @@ function Dashboard() {
       <div className="h-24 px-4 py-2 bg-gray-200 rounded-md flex items-center justify-between">
         <div className="flex items-center gap-x-6">
           <div>
-            <h1>Sunday,</h1>
-            <p>7th July 2024</p>
+            <h1>{format(currentDate, "EEEE,")}</h1>
+            <p>{format(currentDate, "d MMMM yyyy")}</p>
           </div>
           <div className="flex gap-x-2">
-            <div className="bg-green-400 p-1 rounded-full text-white hover:cursor-pointer">
+            <div
+              className="bg-green-400 p-1 rounded-full text-white hover:cursor-pointer"
+              onClick={handlePreviousDay}
+            >
               <ArrowBigLeft />
             </div>
-            <div className="bg-green-400 p-1 rounded-full text-white hover:cursor-pointer">
+            <div
+              className="bg-green-400 p-1 rounded-full text-white hover:cursor-pointer"
+              onClick={handleNextDay}
+            >
               <ArrowBigRight />
             </div>
           </div>

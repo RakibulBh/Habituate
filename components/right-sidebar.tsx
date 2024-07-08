@@ -29,9 +29,6 @@ const RightSidebar = () => {
       {/* Calendar Section */}
       <div>
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Calendar</h3>
-        <div className="w-full h-60 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">
-          Calendar Placeholder
-        </div>
       </div>
     </div>
   );
