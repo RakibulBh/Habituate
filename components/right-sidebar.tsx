@@ -2,6 +2,7 @@
 import React from "react";
 import { useUser } from "@clerk/nextjs"; // Assuming you're using Clerk's React package
 import HabitPieChart from "./piechart";
+import { Calendar } from "./calendar";
 
 const RightSidebar = () => {
   const { user } = useUser();
@@ -9,7 +10,7 @@ const RightSidebar = () => {
   return (
     <div className="border-l-2 border-gray-200 h-screen p-6 w-[20rem] flex flex-col bg-gray-100">
       {/* Profile Section */}
-      <div className="flex flex-col items-center mb-10">
+      <div className="flex flex-col items-center mb-8">
         <img
           src={user?.imageUrl} // User's profile picture
           alt="User Profile"
@@ -22,13 +23,14 @@ const RightSidebar = () => {
 
       {/* Progress Section */}
       <div className="">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Progress</h3>
+        <h3 className="text-lg font-semibold text-gray-700">Progress</h3>
         <HabitPieChart habitsCompleted={30} totalHabits={40} />
       </div>
 
       {/* Calendar Section */}
       <div>
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Calendar</h3>
+        <Calendar />
       </div>
     </div>
   );

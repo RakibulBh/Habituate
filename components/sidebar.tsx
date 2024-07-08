@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { House, List, Settings } from "lucide-react";
-import { SignOutButton } from "@clerk/clerk-react"; // Assuming you have this import path correct for Clerk's SignOutButton
+import { SignOutButton } from "@clerk/nextjs"; // Assuming you have this import path correct for Clerk's SignOutButton
 
 const menuItems = [
   {
@@ -39,9 +39,9 @@ const Sidebar = () => {
       </div>
       <div className="flex flex-col items-center">
         <SignOutButton>
-          <div className="bg-[#6FBA88] text-white px-4 py-2 rounded-md hover:bg-[#5aa76e] transition-colors duration-200">
+          <p className="bg-[#6FBA88] text-white px-4 py-2 rounded-md hover:bg-[#5aa76e] transition-colors duration-200">
             Sign out
-          </div>
+          </p>
         </SignOutButton>
         <div className="text-center text-gray-500 mt-4">
           © 2024 Habit Tracker

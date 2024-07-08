@@ -23,7 +23,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import DaySelector from "./day-selector";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
 const formSchema = z.object({
   habitName: z.string().min(2).max(50),
@@ -35,8 +35,6 @@ export function AddHabitDialog() {
   const { userId } = useAuth();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(userId);
     console.log(values);
   }
 
