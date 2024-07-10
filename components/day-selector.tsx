@@ -1,13 +1,13 @@
 import React from "react";
 
 const daysOfWeek = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
+  { name: "Monday", shortName: "M" },
+  { name: "Tuesday", shortName: "T" },
+  { name: "Wednesday", shortName: "W" },
+  { name: "Thursday", shortName: "Th" },
+  { name: "Friday", shortName: "F" },
+  { name: "Saturday", shortName: "S" },
+  { name: "Sunday", shortName: "Su" },
 ];
 
 type DaySelectorProps = {
@@ -19,17 +19,21 @@ const DaySelector: React.FC<DaySelectorProps> = ({
   selectedDays,
   toggleDay,
 }) => {
+  const isDaySelected = (day: string) => selectedDays.includes(day);
+
   return (
     <div className="flex space-x-2">
       {daysOfWeek.map((day) => (
         <div
-          key={day}
+          key={day.name}
           className={`w-10 h-10 flex items-center justify-center rounded-full cursor-pointer ${
-            selectedDays.includes(day) ? "bg-green-500" : "bg-gray-300"
+            isDaySelected(day.name)
+              ? "bg-[#5A4BE8] text-white"
+              : "bg-gray-200 text-gray-600"
           }`}
-          onClick={() => toggleDay(day)}
+          onClick={() => toggleDay(day.name)}
         >
-          {day.slice(0, 1)}
+          {day.shortName}
         </div>
       ))}
     </div>

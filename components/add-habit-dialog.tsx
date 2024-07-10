@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,7 +9,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -24,28 +23,58 @@ import {
 } from "./ui/form";
 import DaySelector from "./day-selector";
 import { useAuth } from "@clerk/nextjs";
+import { createHabit } from "@/app/dashboard/actions";
+import toast from "react-hot-toast";
+
+const daysOfWeek = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
 
 const formSchema = z.object({
   habitName: z.string().min(2).max(50),
-  habitFrequency: z.array(z.string().min(2)),
+  habitDescription: z.string().min(2).max(100),
+  habitFrequency: z.array(z.string().min(1)),
   habitTime: z.string(),
 });
 
-export function AddHabitDialog() {
+export const AddHabitDialog = () => {
   const { userId } = useAuth();
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       habitName: "",
+      habitDescription: "",
       habitFrequency: [],
       habitTime: "",
     },
   });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!userId) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    try {
+      await createHabit({
+        clerkUserID: userId,
+        habitName: values.habitName,
+        habitDescription: values.habitDescription,
+        habitFrequency: values.habitFrequency,
+        time: values.habitTime,
+      });
+      toast.success("Habit created successfully");
+    } catch (error) {
+      console.error("Error creating habit:", error);
+    }
+  };
 
   const toggleDay = (day: string) => {
     const currentFrequency = form.getValues("habitFrequency");
@@ -58,10 +87,12 @@ export function AddHabitDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Add habit</Button>
+        <Button className="bg-white text-[#5A4BE8] hover:bg-[#3B3478] hover:text-white">
+          Add habit
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+        <DialogHeader className=" text-[#5A4BE8]">
           <DialogTitle>Add a habit</DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -71,9 +102,13 @@ export function AddHabitDialog() {
               name="habitName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Habit title</FormLabel>
+                  <FormLabel className="text-[#5A4BE8]">Habit title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Meditate" {...field} />
+                    <Input
+                      placeholder="Meditate"
+                      className="border-[#5A4BE8] focus:ring-[#5A4BE8] focus:border-[#5A4BE8] text-black"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     This is the habit you want to track
@@ -84,10 +119,30 @@ export function AddHabitDialog() {
             />
             <FormField
               control={form.control}
+              name="habitDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[#5A4BE8]">Description</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Meditate every Wednesday..."
+                      className="border-[#5A4BE8] focus:ring-[#5A4BE8] focus:border-[#5A4BE8] text-black"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Describe the habit you want to track
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="habitFrequency"
               render={() => (
                 <FormItem>
-                  <FormLabel>Repeat</FormLabel>
+                  <FormLabel className="text-[#5A4BE8]">Repeat</FormLabel>
                   <DaySelector
                     selectedDays={form.getValues("habitFrequency")}
                     toggleDay={toggleDay}
@@ -104,16 +159,24 @@ export function AddHabitDialog() {
               name="habitTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Time</FormLabel>
+                  <FormLabel className="text-[#5A4BE8]">Time</FormLabel>
                   <FormControl>
-                    <Input type="time" {...field} />
+                    <Input
+                      type="time"
+                      className="border-[#5A4BE8] focus:ring-[#5A4BE8] focus:border-[#5A4BE8] text-black"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>Set the time for the habit</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
+            <Button
+              className="bg-[#5A4BE8] text-white hover:bg-[#3B3478] hover:text-white"
+              type="submit"
+              onClick={form.handleSubmit(onSubmit)}
+            >
               Save changes
             </Button>
           </form>
@@ -121,4 +184,4 @@ export function AddHabitDialog() {
       </DialogContent>
     </Dialog>
   );
-}
+};

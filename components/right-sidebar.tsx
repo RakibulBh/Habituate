@@ -8,7 +8,7 @@ const RightSidebar = () => {
   const { user } = useUser();
 
   return (
-    <div className="border-l-2 border-gray-200 h-screen p-6 w-[20rem] flex flex-col bg-gray-100">
+    <div className=" h-screen p-6 w-[20rem] flex flex-col bg-[#281F58] rounded-l-md">
       {/* Profile Section */}
       <div className="flex flex-col items-center mb-8">
         <img
@@ -16,14 +16,14 @@ const RightSidebar = () => {
           alt="User Profile"
           className="w-24 h-24 rounded-full mb-4"
         />
-        <h2 className="text-xl font-bold text-gray-700">
+        <h2 className="text-xl font-bold">
           {user?.fullName || `${user?.firstName} ${user?.lastName}`}
         </h2>
       </div>
 
       {/* Progress Section */}
       <div className="">
-        <h3 className="text-lg font-semibold text-gray-700">Progress</h3>
+        <h3 className="text-lg font-semibold">Progress</h3>
         <HabitPieChart habitsCompleted={30} totalHabits={40} />
       </div>
 
