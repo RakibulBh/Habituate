@@ -23,7 +23,7 @@ const Habit = ({
   description: string;
   frequency: string[];
   time: string;
-  date: Date;
+  date: string;
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
@@ -37,21 +37,21 @@ const Habit = ({
       }
     }
     checkHabit();
-  }, [id, userId, date]);
+  }, [[], id, userId, date]);
 
   const handleCheckboxChange = async (checked: boolean) => {
     try {
       if (checked) {
+        setIsChecked(true); // Update state immediately upon success
         await createHabitInstance({
           userId,
           habitId: id,
           date,
           status: checked,
         });
-        setIsChecked(true); // Update state immediately upon success
       } else {
-        await deleteHabitInstance({ date, habitId: id, userId });
         setIsChecked(false); // Update state immediately upon success
+        await deleteHabitInstance({ date, habitId: id, userId });
       }
     } catch (error) {
       console.error("Error updating habit instance:", error);

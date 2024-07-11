@@ -4,20 +4,6 @@ import HabitInstance from "@/models/HabitInstancesSchema";
 import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
 
-const isHabitCompleted = async ({
-  habitId,
-  userId,
-  date,
-}: {
-  habitId: string;
-  userId: string;
-  date: Date;
-}) => {
-  const habitInstance = await HabitInstance.findOne({ habitId, userId, date });
-  if (!habitInstance) return false;
-  return true;
-};
-
 const findUserByClerkId = async (clerkUserID: string) => {
   const user = await User.findOne({ clerkUserID });
   if (!user) throw new Error("User not found");
@@ -34,6 +20,20 @@ const findHabitById = async (habitId: string) => {
   const habit = await Habit.findById(habitId);
   if (!habit) throw new Error("Habit not found");
   return habit;
+};
+
+const isHabitCompleted = async ({
+  habitId,
+  userId,
+  date,
+}: {
+  habitId: string;
+  userId: string;
+  date: string;
+}) => {
+  const habitInstance = await HabitInstance.findOne({ habitId, userId, date });
+  if (!habitInstance) return false;
+  return true;
 };
 
 async function getUserHabits({
@@ -60,7 +60,7 @@ async function deleteHabitInstance({
 }: {
   habitId: string;
   userId: string;
-  date: Date;
+  date: string;
 }) {
   try {
     await HabitInstance.deleteOne({ habitId, userId, date });
@@ -77,7 +77,7 @@ async function createHabitInstance({
 }: {
   userId: string;
   habitId: string;
-  date: Date;
+  date: string;
   status: boolean;
 }) {
   try {
