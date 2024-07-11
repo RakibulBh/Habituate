@@ -23,7 +23,7 @@ import {
 } from "./ui/form";
 import DaySelector from "./day-selector";
 import { useAuth } from "@clerk/nextjs";
-import { createHabit } from "@/app/dashboard/actions";
+import { createHabit } from "@/app/dashboard/_actions";
 import toast from "react-hot-toast";
 
 const daysOfWeek = [
@@ -87,12 +87,12 @@ export const AddHabitDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-white text-[#5A4BE8] hover:bg-[#3B3478] hover:text-white">
+        <Button className="bg-secondary text-tertiary hover:bg-tertiary hover:text-secondary transition-all ease-in-out duration-500">
           Add habit
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader className=" text-[#5A4BE8]">
+        <DialogHeader className=" text-primary">
           <DialogTitle>Add a habit</DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -102,11 +102,11 @@ export const AddHabitDialog = () => {
               name="habitName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[#5A4BE8]">Habit title</FormLabel>
+                  <FormLabel className="text-primary">Habit title</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Meditate"
-                      className="border-[#5A4BE8] focus:ring-[#5A4BE8] focus:border-[#5A4BE8] text-black"
+                      className="border-primary focus:ring-primary focus:border-primary text-black"
                       {...field}
                     />
                   </FormControl>
@@ -122,11 +122,11 @@ export const AddHabitDialog = () => {
               name="habitDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[#5A4BE8]">Description</FormLabel>
+                  <FormLabel className="text-primary">Description</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Meditate every Wednesday..."
-                      className="border-[#5A4BE8] focus:ring-[#5A4BE8] focus:border-[#5A4BE8] text-black"
+                      className="border-primary focus:ring-primary focus:border-primary text-black"
                       {...field}
                     />
                   </FormControl>
@@ -142,7 +142,7 @@ export const AddHabitDialog = () => {
               name="habitFrequency"
               render={() => (
                 <FormItem>
-                  <FormLabel className="text-[#5A4BE8]">Repeat</FormLabel>
+                  <FormLabel className="text-primary">Repeat</FormLabel>
                   <DaySelector
                     selectedDays={form.getValues("habitFrequency")}
                     toggleDay={toggleDay}
@@ -159,11 +159,11 @@ export const AddHabitDialog = () => {
               name="habitTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[#5A4BE8]">Time</FormLabel>
+                  <FormLabel className="text-primary">Time</FormLabel>
                   <FormControl>
                     <Input
                       type="time"
-                      className="border-[#5A4BE8] focus:ring-[#5A4BE8] focus:border-[#5A4BE8] text-black"
+                      className="border-primary focus:ring-primary focus:ring-2 focus:border-primary text-black"
                       {...field}
                     />
                   </FormControl>
@@ -173,7 +173,7 @@ export const AddHabitDialog = () => {
               )}
             />
             <Button
-              className="bg-[#5A4BE8] text-white hover:bg-[#3B3478] hover:text-white"
+              className="bg-tertiary text-secondary hover:bg-primary hover:text-white"
               type="submit"
               onClick={form.handleSubmit(onSubmit)}
             >

@@ -6,7 +6,7 @@ import { format, addDays, subDays } from "date-fns";
 import { useUser } from "@clerk/nextjs";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
-import { getUserHabits } from "./actions";
+import { getUserHabits } from "./_actions";
 
 function Dashboard() {
   const { user } = useUser();
@@ -17,7 +17,10 @@ function Dashboard() {
     if (!user) return;
 
     try {
-      const habits = await getUserHabits(user.id, format(currentDate, "EEEE"));
+      const habits = await getUserHabits({
+        clerkUserID: user.id,
+        day: format(currentDate, "EEEE"),
+      });
       setDayHabits(habits);
     } catch (error) {
       console.error("Error getting user habits:", error);
@@ -38,7 +41,7 @@ function Dashboard() {
 
   return (
     <section className="flex flex-col gap-4 h-full">
-      <div className="h-24 px-4 py-2 bg-[#3B3478] rounded-md flex items-center justify-between">
+      <div className="h-24 px-4 py-2 bg-white rounded-md flex items-center justify-between">
         <div className="flex items-center gap-x-6">
           <div className="">
             <h1>{format(currentDate, "EEEE,")}</h1>
@@ -46,24 +49,33 @@ function Dashboard() {
           </div>
           <div className="flex gap-x-2">
             <div
-              className="bg-white p-1 rounded-full hover:cursor-pointer"
+              className="bg-tertiary text-secondary hover:text-white hover:bg-primary p-1 rounded-full hover:cursor-pointer"
               onClick={handlePreviousDay}
             >
-              <ArrowBigLeft className="text-[#5A4BE8]" />
+              <ArrowBigLeft className="" />
             </div>
             <div
-              className="bg-white p-1 rounded-full  hover:cursor-pointer"
+              className="bg-tertiary text-secondary p-1 rounded-full  hover:cursor-pointer"
               onClick={handleNextDay}
             >
-              <ArrowBigRight className="text-[#5A4BE8]" />
+              <ArrowBigRight className="" />
             </div>
           </div>
         </div>
         <AddHabitDialog />
       </div>
-      <div className="flex-grow bg-[#3B3478] rounded-md py-6 px-4 space-y-4">
-        {dayHabits.map((habit, index) => (
-          <Habit key={index} title={habit.habitName} />
+      <div className="flex-grow bg-white rounded-md py-6 px-4 space-y-4">
+        {dayHabits.map((habit) => (
+          <Habit
+            key={habit._id}
+            id={habit._id}
+            description={habit.habitDescription}
+            userId={habit.userId}
+            frequency={habit.habitFrequency}
+            time={habit.time}
+            date={currentDate}
+            title={habit.habitName}
+          />
         ))}
       </div>
     </section>

@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-console.log("Trying to connect to mongo...");
 mongoose.connect(process.env.MONGODB_URL!);
 mongoose.Promise = global.Promise;
 

@@ -28,7 +28,7 @@ const DaySelector: React.FC<DaySelectorProps> = ({
           key={day.name}
           className={`w-10 h-10 flex items-center justify-center rounded-full cursor-pointer ${
             isDaySelected(day.name)
-              ? "bg-[#5A4BE8] text-white"
+              ? "bg-primary text-white"
               : "bg-gray-200 text-gray-600"
           }`}
           onClick={() => toggleDay(day.name)}

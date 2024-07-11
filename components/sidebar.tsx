@@ -20,14 +20,16 @@ const menuItems = [
 
 const Sidebar = () => {
   return (
-    <div className=" h-screen p-6 flex flex-col justify-between bg-[#3B3478] w-[20rem] rounded-r-md">
+    <div className="h-screen p-6 flex flex-col justify-between bg-white w-[20rem] rounded-r-md">
       <div>
-        <div className="text-2xl font-bold mb-10">Habit Tracker</div>
+        <div className="text-2xl text-primary font-bold mb-10">
+          Habit Tracker
+        </div>
         <div className="flex flex-col gap-6">
           {menuItems.map((menuItem, index) => (
             <div
               key={index}
-              className="flex items-center gap-4 hover:text-white cursor-pointer p-2 rounded-md hover:bg-[#5A4BE8] transition-colors duration-200"
+              className="flex items-center gap-4 hover:text-white cursor-pointer p-2 rounded-md hover:bg-primary transition-colors duration-200"
             >
               <menuItem.icon className="h-6 w-6" />
               <span className="text-lg">{menuItem.name}</span>
@@ -37,13 +39,11 @@ const Sidebar = () => {
       </div>
       <div className="flex flex-col items-center">
         <SignOutButton>
-          <p className="bg-white text-[#5A4BE8] px-4 py-2 rounded-md hover:bg-gray-200 transition-colors duration-200">
+          <p className="bg-primary text-white px-4 py-2 hover:cursor-pointer rounded-md hover:text-primary hover:bg-tertiary transition-colors duration-200">
             Sign out
           </p>
         </SignOutButton>
-        <div className="text-center text-gray-400 mt-4">
-          © 2024 Habit Tracker
-        </div>
+        <div className="text-center text-gray-400 mt-4">© 2024 Habituate</div>
       </div>
     </div>
   );

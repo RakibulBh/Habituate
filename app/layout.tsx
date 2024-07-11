@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={cn(poppins.className, "bg-[#0B071E] text-white")}>
+        <body className={cn(poppins.className, "bg-gray-100")}>
           <div>
             <Toaster position="top-center" reverseOrder={false} />
           </div>

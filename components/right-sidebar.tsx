@@ -8,7 +8,7 @@ const RightSidebar = () => {
   const { user } = useUser();
 
   return (
-    <div className=" h-screen p-6 w-[20rem] flex flex-col bg-[#281F58] rounded-l-md">
+    <div className=" h-screen p-6 w-[20rem] flex flex-col bg-white rounded-l-md">
       {/* Profile Section */}
       <div className="flex flex-col items-center mb-8">
         <img

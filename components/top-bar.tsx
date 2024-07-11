@@ -9,9 +9,11 @@ const ProgressCard = () => {
   const percentage = 62;
 
   return (
-    <div className="bg-[#5A4BE8] text-white p-6 rounded-xl flex flex-col justify-between h-60 w-full shadow-lg">
+    <div className="bg-white text-primary p-6 rounded-xl flex flex-col justify-between h-60 w-full shadow-lg">
       <div className="flex items-center justify-between mb-4">
-        <p className=" font-semibold text-lg">You are almost done!</p>
+        <p className=" font-semibold text-lg text-gray-500">
+          You are almost done!
+        </p>
         <MobileSidebar />
       </div>
       <div className="flex items-center justify-between flex-grow">
@@ -29,7 +31,7 @@ const ProgressCard = () => {
             <div className="">Tasks</div>
           </div>
         </div>
-        <div className="w-24 h-24 flex justify-center items-center bg-[#5A4BE8] rounded-full border-2 border-[#9D92F1] shadow-md">
+        <div className="w-24 h-24 flex justify-center items-center bg-white rounded-full border-2 border-primary shadow-md">
           <div className="text-xl font-bold">{percentage}%</div>
         </div>
       </div>

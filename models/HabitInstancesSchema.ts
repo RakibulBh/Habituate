@@ -16,5 +16,6 @@ const habitInstacesSchema = new Schema(
 );
 
 const HabitInstance =
-  mongoose.models.Habit || mongoose.model("HabitInstance", habitInstacesSchema);
+  mongoose.models.HabitInstance ||
+  mongoose.model("HabitInstance", habitInstacesSchema);
 export default HabitInstance;
