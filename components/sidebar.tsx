@@ -39,7 +39,7 @@ const Sidebar = () => {
       </div>
       <div className="flex flex-col items-center">
         <SignOutButton>
-          <p className="bg-primary text-white px-4 py-2 hover:cursor-pointer rounded-md hover:text-primary hover:bg-tertiary transition-colors duration-200">
+          <p className="bg-secondary text-white hover:bg-tertiary hover:text-secondary px-4 py-2 hover:cursor-pointer rounded-md transition-colors duration-200">
             Sign out
           </p>
         </SignOutButton>

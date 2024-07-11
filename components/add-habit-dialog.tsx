@@ -87,7 +87,7 @@ export const AddHabitDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-secondary text-tertiary hover:bg-tertiary hover:text-secondary transition-all ease-in-out duration-500">
+        <Button className="bg-secondary text-white hover:bg-tertiary hover:text-secondary transition-all ease-in-out duration-500">
           Add habit
         </Button>
       </DialogTrigger>
@@ -173,7 +173,7 @@ export const AddHabitDialog = () => {
               )}
             />
             <Button
-              className="bg-tertiary text-secondary hover:bg-primary hover:text-white"
+              className="bg-secondary text-white hover:bg-tertiary hover:text-secondary"
               type="submit"
               onClick={form.handleSubmit(onSubmit)}
             >

@@ -4,6 +4,20 @@ import HabitInstance from "@/models/HabitInstancesSchema";
 import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
 
+const isHabitCompleted = async ({
+  habitId,
+  userId,
+  date,
+}: {
+  habitId: string;
+  userId: string;
+  date: Date;
+}) => {
+  const habitInstance = await HabitInstance.findOne({ habitId, userId, date });
+  if (!habitInstance) return false;
+  return true;
+};
+
 const findUserByClerkId = async (clerkUserID: string) => {
   const user = await User.findOne({ clerkUserID });
   if (!user) throw new Error("User not found");
@@ -113,4 +127,10 @@ async function createHabit({
   }
 }
 
-export { createHabit, getUserHabits, createHabitInstance, deleteHabitInstance };
+export {
+  createHabit,
+  getUserHabits,
+  createHabitInstance,
+  deleteHabitInstance,
+  isHabitCompleted,
+};

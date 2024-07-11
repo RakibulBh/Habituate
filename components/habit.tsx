@@ -1,10 +1,10 @@
-"use client";
 import { Bed, Sparkle } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox } from "./ui/checkbox";
 import {
   createHabitInstance,
   deleteHabitInstance,
+  isHabitCompleted,
 } from "@/app/dashboard/_actions";
 import { useUser } from "@clerk/nextjs";
 
@@ -25,23 +25,43 @@ const Habit = ({
   time: string;
   date: Date;
 }) => {
-  const handleCheckboxChange = (checked: boolean) => {
-    if (checked) {
-      createHabitInstance({
-        userId,
-        habitId: id,
-        date: date,
-        status: checked,
-      });
-    } else if (!checked) {
-      deleteHabitInstance({ date, habitId: id, userId });
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function checkHabit() {
+      try {
+        const completed = await isHabitCompleted({ date, habitId: id, userId });
+        setIsChecked(completed);
+      } catch (error) {
+        console.error("Error checking habit:", error);
+      }
+    }
+    checkHabit();
+  }, [id, userId, date]);
+
+  const handleCheckboxChange = async (checked: boolean) => {
+    try {
+      if (checked) {
+        await createHabitInstance({
+          userId,
+          habitId: id,
+          date,
+          status: checked,
+        });
+        setIsChecked(true); // Update state immediately upon success
+      } else {
+        await deleteHabitInstance({ date, habitId: id, userId });
+        setIsChecked(false); // Update state immediately upon success
+      }
+    } catch (error) {
+      console.error("Error updating habit instance:", error);
     }
   };
 
   return (
     <div className="flex items-center justify-between px-4 py-3 shadow-md rounded-xl">
       <div className="flex items-center gap-x-4">
-        <div className="p-3 bg-primary text-white rounded-full">
+        <div className="p-3 bg-secondary text-white rounded-full">
           <Bed />
         </div>
         <div>
@@ -53,7 +73,7 @@ const Habit = ({
         </div>
       </div>
       <div>
-        <Checkbox onCheckedChange={handleCheckboxChange} />
+        <Checkbox checked={isChecked} onCheckedChange={handleCheckboxChange} />
       </div>
     </div>
   );

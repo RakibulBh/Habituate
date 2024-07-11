@@ -49,16 +49,16 @@ function Dashboard() {
           </div>
           <div className="flex gap-x-2">
             <div
-              className="bg-tertiary text-secondary hover:text-white hover:bg-primary p-1 rounded-full hover:cursor-pointer"
+              className="bg-secondary text-white hover:bg-tertiary hover:text-secondary p-1 rounded-full hover:cursor-pointer"
               onClick={handlePreviousDay}
             >
-              <ArrowBigLeft className="" />
+              <ArrowBigLeft />
             </div>
             <div
-              className="bg-tertiary text-secondary p-1 rounded-full  hover:cursor-pointer"
+              className="bg-secondary text-white hover:bg-tertiary hover:text-secondary p-1 rounded-full  hover:cursor-pointer"
               onClick={handleNextDay}
             >
-              <ArrowBigRight className="" />
+              <ArrowBigRight />
             </div>
           </div>
         </div>
