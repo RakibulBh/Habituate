@@ -2,6 +2,8 @@
 import React from "react";
 import { House, List, Settings } from "lucide-react";
 import { SignOutButton } from "@clerk/nextjs"; // Assuming you have this import path correct for Clerk's SignOutButton
+import { Calendar } from "./calendar";
+import LevelSystem from "./level-system";
 
 const menuItems = [
   {
@@ -20,31 +22,18 @@ const menuItems = [
 
 const Sidebar = () => {
   return (
-    <div className="h-screen p-6 flex flex-col justify-between bg-white w-[20rem] rounded-r-md">
-      <div>
-        <div className="text-2xl text-primary font-bold mb-10">
-          Habit Tracker
+    <div className="w-[20rem] h-screen bg-white px-4 py-8 flex flex-col justify-between items-center">
+      <div className="space-y-4">
+        <div className="bg-[#CCFFE9] h-40 rounded-md flex items-center px-4 py-6 gap-x-4">
+          <div className="w-20 h-20 rounded-full bg-primary"></div>
+          <div className="">
+            <p>You are almost done!</p>
+            <p className="text-gray-400">1 of 4 completed</p>
+          </div>
         </div>
-        <div className="flex flex-col gap-6">
-          {menuItems.map((menuItem, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-4 hover:text-white cursor-pointer p-2 rounded-md hover:bg-primary transition-colors duration-200"
-            >
-              <menuItem.icon className="h-6 w-6" />
-              <span className="text-lg">{menuItem.name}</span>
-            </div>
-          ))}
-        </div>
+        <Calendar />
       </div>
-      <div className="flex flex-col items-center">
-        <SignOutButton>
-          <p className="bg-secondary text-white hover:bg-tertiary hover:text-secondary px-4 py-2 hover:cursor-pointer rounded-md transition-colors duration-200">
-            Sign out
-          </p>
-        </SignOutButton>
-        <div className="text-center text-gray-400 mt-4">© 2024 Habituate</div>
-      </div>
+      <LevelSystem />
     </div>
   );
 };

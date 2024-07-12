@@ -51,44 +51,8 @@ function Dashboard() {
   };
 
   return (
-    <section className="flex flex-col gap-4 h-full">
-      <div className="h-24 px-4 py-2 bg-white rounded-md flex items-center justify-between">
-        <div className="flex items-center gap-x-6">
-          <div className="">
-            <h1>{format(currentDate, "EEEE,")}</h1>
-            <p>{format(currentDate, "d MMMM yyyy")}</p>
-          </div>
-          <div className="flex gap-x-2">
-            <div
-              className="bg-secondary text-white hover:bg-tertiary hover:text-secondary p-1 rounded-full hover:cursor-pointer"
-              onClick={handlePreviousDay}
-            >
-              <ArrowBigLeft />
-            </div>
-            <div
-              className="bg-secondary text-white hover:bg-tertiary hover:text-secondary p-1 rounded-full  hover:cursor-pointer"
-              onClick={handleNextDay}
-            >
-              <ArrowBigRight />
-            </div>
-          </div>
-        </div>
-        <AddHabitDialog />
-      </div>
-      <div className="flex-grow bg-white rounded-md py-6 px-4 space-y-4">
-        {dayHabits.map((habit) => (
-          <Habit
-            key={habit._id}
-            id={habit._id}
-            description={habit.habitDescription}
-            userId={habit.userId}
-            frequency={habit.habitFrequency}
-            time={habit.time}
-            date={formattedDate}
-            title={habit.habitName}
-          />
-        ))}
-      </div>
+    <section>
+      <p>hi</p>
     </section>
   );
 }

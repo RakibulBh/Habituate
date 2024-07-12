@@ -16,14 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <main className="flex">
-      <div className="hidden xl:block">
+      <div>
         <Sidebar />
       </div>
-      <div className="p-2 flex flex-col flex-1 gap-4">
-        <ProgressCard />
-        {children}
-      </div>
-      <RightSidebar />
+      {children}
     </main>
   );
 }

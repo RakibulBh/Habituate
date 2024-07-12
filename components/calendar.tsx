@@ -1,7 +1,3 @@
-// Tremor Raw Calendar [v0.0.3]
-
-"use client";
-
 import * as React from "react";
 import {
   RiArrowLeftDoubleLine,
@@ -21,7 +17,9 @@ import {
   type Matcher,
 } from "react-day-picker";
 
-import { cn, focusRing } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { focusRing } from "@/lib/utils";
+import { ProgressCircle } from "@/components/progress-circle";
 
 interface NavigationButtonProps
   extends React.HTMLAttributes<HTMLButtonElement> {
@@ -123,13 +121,13 @@ const Calendar = ({
           "text-gray-900 dark:text-gray-50"
         ),
         day: cn(
-          "size-9 rounded text-sm text-gray-900 dark:text-gray-50",
-          "hover:bg-gray-200 hover:dark:bg-gray-700",
+          "size-9 rounded-full text-sm text-gray-900 dark:text-gray-50",
+          "hover:bg-blue-500 hover:text-white hover:dark:bg-gray-700",
           focusRing
         ),
         day_today: "font-semibold",
         day_selected: cn(
-          "rounded",
+          "rounded-full",
           "aria-selected:bg-gray-900 aria-selected:text-gray-50",
           "dark:aria-selected:bg-gray-50 dark:aria-selected:text-gray-900"
         ),
@@ -282,30 +280,44 @@ const Calendar = ({
             ...buttonPropsRest
           } = buttonProps;
 
+          function getRandomInt(min: number, max: number) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          }
+
           return (
-            <button
-              ref={buttonRef}
-              {...buttonPropsRest}
-              type="button"
-              className={cn("relative", buttonClassName)}
+            <ProgressCircle
+              radius={20}
+              strokeWidth={4}
+              data-testid="progresscircle"
+              value={getRandomInt(1, 100)}
+              className="p-1"
             >
-              {buttonChildren}
-              {today && (
-                <span
-                  className={cn(
-                    "absolute inset-x-1/2 bottom-1.5 h-0.5 w-4 -translate-x-1/2 rounded-[2px]",
-                    {
-                      "bg-blue-500 dark:bg-blue-500": !selected,
-                      "!bg-white dark:!bg-gray-950": selected,
-                      "!bg-gray-400 dark:!bg-gray-600":
-                        selected && range_middle,
-                      "bg-gray-400 text-gray-400 dark:bg-gray-400 dark:text-gray-600":
-                        disabled,
-                    }
-                  )}
-                />
-              )}
-            </button>
+              <button
+                ref={buttonRef}
+                {...buttonPropsRest}
+                type="button"
+                className={cn("relative", buttonClassName)}
+              >
+                {buttonChildren}
+                {today && (
+                  <span
+                    className={cn(
+                      "absolute inset-x-1/2 bottom-1.5 h-0.5 w-4 -translate-x-1/2 rounded-[2px]",
+                      {
+                        "bg-blue-500 dark:bg-blue-500": !selected,
+                        "!bg-white dark:!bg-gray-950": selected,
+                        "!bg-gray-400 dark:!bg-gray-600":
+                          selected && range_middle,
+                        "bg-gray-400 text-gray-400 dark:bg-gray-400 dark:text-gray-600":
+                          disabled,
+                      }
+                    )}
+                  />
+                )}
+              </button>
+            </ProgressCircle>
           );
         },
       }}
