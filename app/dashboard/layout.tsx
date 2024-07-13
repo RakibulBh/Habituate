@@ -19,7 +19,7 @@ export default function RootLayout({
       <div>
         <Sidebar />
       </div>
-      {children}
+      <div className="flex-1">{children}</div>
     </main>
   );
 }

@@ -1,60 +1,63 @@
 "use client";
-
-import { AddHabitDialog } from "@/components/add-habit-dialog";
+import { DayCarousel } from "@/components/day-carousel";
+import GoalCard from "@/components/goal-card";
 import Habit from "@/components/habit";
-import { format, addDays, subDays } from "date-fns";
+import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
-import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
-import React, { useEffect, useState, useCallback } from "react";
-import { getUserHabits } from "./_actions";
-import { set } from "mongoose";
+import React, { useState } from "react";
 
 function Dashboard() {
   const { user } = useUser();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [formattedDate, setFormattedDate] = useState<string>("");
+  const [currentView, setCurrentView] = useState("All Day");
+  const [baseDate, setBaseDate] = useState(new Date());
 
-  useEffect(() => {
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    setFormattedDate(`${year}-${month}-${day}`);
-    console.log(formattedDate);
-  }, [currentDate]);
-
-  const [dayHabits, setDayHabits] = useState<any[]>([]);
-
-  const fetchHabits = useCallback(async () => {
-    if (!user) return;
-
-    try {
-      const habits = await getUserHabits({
-        clerkUserID: user.id,
-        day: format(currentDate, "EEEE"),
-      });
-      setDayHabits(habits);
-    } catch (error) {
-      console.error("Error getting user habits:", error);
-    }
-  }, [user, currentDate]);
-
-  useEffect(() => {
-    fetchHabits();
-  }, [fetchHabits]);
-
-  const handlePreviousDay = () => {
-    setCurrentDate(subDays(currentDate, 1));
-  };
-
-  const handleNextDay = () => {
-    setCurrentDate(addDays(currentDate, 1));
-  };
+  const views = ["All Day", "Morning", "Afternoon", "Evening"];
 
   return (
-    <section>
-      <p>hi</p>
+    <section className="h-screen container flex flex-col items-center">
+      <DayCarousel
+        baseDate={baseDate}
+        setCurrentDate={setCurrentDate}
+        currentDate={currentDate}
+      />
+      <div className="container px-20 flex flex-col mt-10 gap-y-5">
+        <div className="flex justify-between">
+          {views.map((view, index) => (
+            <h1
+              key={index}
+              onClick={() => setCurrentView(view)}
+              className={cn(
+                "text-xl font-light hover:cursor-pointer relative pb-1",
+                currentView === view && "relative" // Ensure relative positioning when currentView matches view
+              )}
+            >
+              {view}
+              {currentView === view && (
+                <span
+                  className="absolute bottom-0 left-0 bg-secondary h-1 rounded-xl"
+                  style={{ width: "3rem" }}
+                ></span>
+              )}
+            </h1>
+          ))}
+        </div>
+        <div className="space-y-2">
+          <h1 className="font-light text-gray-500 text-2xl">Goals</h1>
+          <div className="space-y-2">
+            <GoalCard />
+            <GoalCard />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h1 className="font-light text-gray-500 text-2xl">Habits</h1>
+          <div className="space-y-2">
+            <Habit />
+            <Habit />
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
-
 export default Dashboard;
