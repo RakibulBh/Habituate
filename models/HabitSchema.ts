@@ -6,9 +6,12 @@ mongoose.Promise = global.Promise;
 const habitSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    habitName: { type: String, required: true },
-    habitDescription: { type: String, required: true },
-    habitFrequency: { type: [String], required: true },
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    color: { type: String, required: true },
+    repeat: { type: [String], required: true },
+    frequency: { type: Number, required: true },
+    unit: { type: String, required: true },
     time: { type: String, required: true },
   },
   {

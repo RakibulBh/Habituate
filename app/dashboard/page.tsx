@@ -1,4 +1,5 @@
 "use client";
+import AddHabitDialog from "@/components/add-habit-dialog";
 import { DayCarousel } from "@/components/day-carousel";
 import GoalCard from "@/components/goal-card";
 import Habit from "@/components/habit";
@@ -16,6 +17,7 @@ function Dashboard() {
 
   return (
     <section className="h-screen container flex flex-col items-center">
+      <AddHabitDialog />
       <DayCarousel
         baseDate={baseDate}
         setCurrentDate={setCurrentDate}

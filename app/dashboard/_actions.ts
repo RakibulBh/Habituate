@@ -99,15 +99,21 @@ async function createHabitInstance({
 
 async function createHabit({
   clerkUserID,
-  habitName,
-  habitDescription,
-  habitFrequency,
+  title,
+  color,
+  description,
+  repeat,
+  frequency,
+  unit,
   time,
 }: {
   clerkUserID: string;
-  habitName: string;
-  habitDescription: string;
-  habitFrequency: string[];
+  title: string;
+  color: string;
+  description: string;
+  repeat: string[];
+  frequency: number;
+  unit: string;
   time: string;
 }) {
   try {
@@ -115,9 +121,12 @@ async function createHabit({
 
     const newHabit = new Habit({
       userId: user._id,
-      habitName,
-      habitDescription,
-      habitFrequency,
+      title,
+      color,
+      description,
+      repeat,
+      frequency,
+      unit,
       time,
     });
 
