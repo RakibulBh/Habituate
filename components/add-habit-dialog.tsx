@@ -69,26 +69,24 @@ const AddHabitDialog = () => {
     form.setValue("repeat", updatedFrequency);
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const selectedDays = form.watch("repeat");
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
     try {
-      const newHabiit = createHabit({
+      await createHabit({
         clerkUserID: user.id,
-        title: values.title,
-        color: values.color,
-        description: values.description,
-        repeat: values.repeat,
-        frequency: values.frequency,
-        unit: values.unit,
-        time: values.time,
+        ...values,
       });
       toast.success("Habit created successfully");
-    } catch (e: any) {
-      toast.error(e);
+    } catch (error) {
+      if (error instanceof MongooseError) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
-  }
-
-  const selectedDays = form.watch("repeat");
+  };
 
   return (
     <Dialog>
@@ -97,23 +95,25 @@ const AddHabitDialog = () => {
           +
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader className="mx-auto">
-          <DialogTitle className="font-semibold">Add a habit</DialogTitle>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Habit</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-            <div className="flex justify-between">
+            <div className="flex gap-x-6">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-light">
-                      Name of your habit
-                    </FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Meditate" {...field} />
+                      <Input
+                        className="w-60"
+                        placeholder="Enter the title"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -124,58 +124,53 @@ const AddHabitDialog = () => {
                 name="color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-light">Colour</FormLabel>
+                    <FormLabel>Color</FormLabel>
                     <FormControl>
-                      <Input type="color" placeholder="#FFFFFF" {...field} />
+                      <Input className="" type="color" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-light">Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="A habit to train the brain to relax"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="repeat"
-                render={() => (
-                  <FormItem>
-                    <FormLabel className="font-light">Repeat</FormLabel>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter the description" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="repeat"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Repeat</FormLabel>
+                  <FormControl>
                     <DaySelector
                       toggleDay={toggleDay}
                       selectedDays={selectedDays}
                     />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex gap-6">
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex space-x-4">
               <FormField
                 control={form.control}
                 name="frequency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-light">Frequency</FormLabel>
+                    <FormLabel>Frequency</FormLabel>
                     <FormControl>
-                      <Input placeholder="3" type="number" {...field} />
+                      <Input type="number" placeholder="Frequency" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -186,56 +181,43 @@ const AddHabitDialog = () => {
                 name="unit"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-light">Unit</FormLabel>
-                    <FormControl>
-                      <Controller
-                        name="unit"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="measurement unit" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectItem value="times">Times</SelectItem>
-                                <SelectItem value="km">Kilometres</SelectItem>
-                                <SelectItem value="ml">Millilitres</SelectItem>
-                                <SelectItem value="litres">Litres</SelectItem>
-                                <SelectItem value="pages">Pages</SelectItem>
-                                <SelectItem value="n/a">N/A</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </FormControl>
+                    <FormLabel>Unit</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select unit" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="times">Times</SelectItem>
+                          <SelectItem value="minutes">Minutes</SelectItem>
+                          <SelectItem value="hours">Hours</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-light">Time</FormLabel>
-                    <FormControl>
-                      <Input className="w-30" type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex justify-end pt-6">
-              <Button type="submit">Submit</Button>
-            </div>
+            <FormField
+              control={form.control}
+              name="time"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" placeholder="Time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
           </form>
         </Form>
       </DialogContent>

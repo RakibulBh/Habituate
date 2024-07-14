@@ -3,6 +3,7 @@
 import HabitInstance from "@/models/HabitInstancesSchema";
 import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
+import { revalidatePath } from "next/cache";
 
 const findUserByClerkId = async (clerkUserID: string) => {
   const user = await User.findOne({ clerkUserID });
@@ -31,29 +32,32 @@ const isHabitCompleted = async ({
   userId: string;
   date: string;
 }) => {
-  const habitInstance = await HabitInstance.findOne({ habitId, userId, date });
-  if (!habitInstance) return false;
-  return true;
+  const habitInstance = await HabitInstance.findOne({
+    habitId,
+    userId,
+    date,
+  });
+  return !!habitInstance;
 };
 
-async function getUserHabits({
-  clerkUserID,
+const getUserHabitsByDay = async ({
+  clerkUserId,
   day,
 }: {
-  clerkUserID: string;
+  clerkUserId: string;
   day: string;
-}) {
+}) => {
   try {
-    const user = await findUserByClerkId(clerkUserID);
-    const habits = await Habit.find({ userId: user._id, habitFrequency: day });
+    const user = await findUserByClerkId(clerkUserId);
+    const habits = await Habit.find({ userId: user._id, repeat: day });
     return JSON.parse(JSON.stringify(habits));
   } catch (error) {
     console.error(`Error getting user habits: ${error}`);
     return [];
   }
-}
+};
 
-async function deleteHabitInstance({
+const deleteHabitInstance = async ({
   habitId,
   userId,
   date,
@@ -61,43 +65,71 @@ async function deleteHabitInstance({
   habitId: string;
   userId: string;
   date: string;
-}) {
+}) => {
   try {
     await HabitInstance.deleteOne({ habitId, userId, date });
   } catch (error) {
     console.error(`Error deleting habit instance: ${error}`);
   }
-}
+};
 
-async function createHabitInstance({
-  userId,
-  habitId,
+const findHabitInstance = async ({
+  clerkUserId,
   date,
-  status,
 }: {
-  userId: string;
+  clerkUserId: string;
+  date: string;
+}) => {
+  try {
+    const user = await findUserByClerkId(clerkUserId);
+    const habitInstance = await HabitInstance.findOne({
+      userId: user._id,
+      date,
+    });
+    return JSON.parse(JSON.stringify(habitInstance)) || null;
+  } catch (e) {
+    return null;
+  }
+};
+
+const createHabitInstance = async ({
+  clerkUserId,
+  habitId,
+  value,
+  goal,
+  date,
+}: {
+  clerkUserId: string;
   habitId: string;
   date: string;
-  status: boolean;
-}) {
+  value: number;
+  goal: number;
+}) => {
   try {
-    await findUserById(userId);
-    await findHabitById(habitId);
+    const user = await findUserByClerkId(clerkUserId);
+    const habitInstance = await findHabitInstance({ clerkUserId, date });
 
-    const habitInstance = new HabitInstance({
-      userId,
-      habitId,
-      date,
-      status,
-    });
-
-    await habitInstance.save();
+    if (!habitInstance) {
+      const newHabitInstance = new HabitInstance({
+        userId: user._id,
+        habitId,
+        value,
+        goal,
+        date,
+      });
+      await newHabitInstance.save();
+    } else {
+      await HabitInstance.updateOne(
+        { _id: habitInstance._id },
+        { value, completed: value >= goal }
+      );
+    }
   } catch (error) {
     console.error(`Error creating habit instance: ${error}`);
   }
-}
+};
 
-async function createHabit({
+const createHabit = async ({
   clerkUserID,
   title,
   color,
@@ -115,7 +147,7 @@ async function createHabit({
   frequency: number;
   unit: string;
   time: string;
-}) {
+}) => {
   try {
     const user = await findUserByClerkId(clerkUserID);
 
@@ -129,17 +161,18 @@ async function createHabit({
       unit,
       time,
     });
-
     await newHabit.save();
+    revalidatePath("/dashboard");
   } catch (error) {
     console.error(`Error creating habit: ${error}`);
   }
-}
+};
 
 export {
   createHabit,
-  getUserHabits,
+  getUserHabitsByDay,
   createHabitInstance,
   deleteHabitInstance,
   isHabitCompleted,
+  findHabitInstance,
 };

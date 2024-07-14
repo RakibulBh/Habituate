@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Sidebar from "@/components/sidebar";
 import RightSidebar from "@/components/right-sidebar";
-import ProgressCard from "@/components/top-bar";
 import { MobileSidebar } from "@/components/mobile-sidebar";
 
 export const metadata: Metadata = {

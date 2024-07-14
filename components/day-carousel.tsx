@@ -14,9 +14,9 @@ export function DayCarousel({
   baseDate,
   setCurrentDate,
 }: {
-  currentDate: Date;
+  currentDate: string;
   baseDate: Date;
-  setCurrentDate: (date: Date) => void;
+  setCurrentDate: (date: string) => void;
 }) {
   const generateWeekDates = (startDate: Date) => {
     const start = startOfWeek(startDate, { weekStartsOn: 1 }); // Assuming week starts on Monday
@@ -25,7 +25,7 @@ export function DayCarousel({
 
   const getWeeksAroundCurrentDate = () => {
     const previousWeek = generateWeekDates(subDays(baseDate, 7));
-    const currentWeek = generateWeekDates(baseDate);
+    const currentWeek = generateWeekDates(new Date(baseDate));
     const nextWeek = generateWeekDates(addDays(baseDate, 7));
     const nextNextWeek = generateWeekDates(addDays(baseDate, 14));
     return [previousWeek, currentWeek, nextWeek, nextNextWeek];

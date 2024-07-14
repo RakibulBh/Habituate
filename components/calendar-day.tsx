@@ -8,7 +8,7 @@ const CalendarDay = ({
   day,
   isCurrentDay,
 }: {
-  setCurrentDate: (date: Date) => void;
+  setCurrentDate: (date: string) => void;
   date: Date;
   day: string;
   dateNum: string;
@@ -20,7 +20,7 @@ const CalendarDay = ({
         "text-center items-center flex flex-col justify-center text-secondary w-16 h-20 rounded-xl hover:cursor-pointer",
         isCurrentDay ? "bg-secondary text-white" : "bg-white"
       )}
-      onClick={() => setCurrentDate(date)}
+      onClick={() => setCurrentDate(date.toISOString())}
     >
       <p>{dateNum}</p>
       <p>{day}</p>

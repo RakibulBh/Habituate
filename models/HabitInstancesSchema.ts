@@ -8,7 +8,9 @@ const habitInstacesSchema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     habitId: { type: Schema.Types.ObjectId, ref: "Habit", required: true },
     date: { type: Date, required: true },
-    status: { type: Boolean, required: true },
+    value: { type: Number, required: true, default: 0 },
+    goal: { type: Number, required: true },
+    completed: { type: Boolean, required: true, default: false },
   },
   {
     timestamps: true,
