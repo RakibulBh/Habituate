@@ -26,6 +26,8 @@ const Habit = ({
     null
   );
 
+  //TODO: Habit progress does not change properly when swithcing between dates
+
   useEffect(() => {
     const isInstance = async () => {
       if (!user) return null;
