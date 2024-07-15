@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { findHabitInstance } from "@/app/dashboard/_actions";
 import { useUser } from "@clerk/nextjs";
 import { HabitInstance } from "@/types/types";
-import { set } from "mongoose";
 
 const Habit = ({
   title,
@@ -26,6 +25,8 @@ const Habit = ({
   const [habitInstance, setHabitInstance] = useState<HabitInstance | null>(
     null
   );
+
+  console.log(color);
 
   useEffect(() => {
     const isInstance = async () => {
@@ -48,9 +49,9 @@ const Habit = ({
   return (
     <div
       className={cn(
-        "bg-white border-l-8 rounded-md p-4 flex items-center justify-between",
-        `border-l-[${color}]`
+        `bg-white rounded-md p-4 flex items-center justify-between`
       )}
+      style={{ borderLeft: `0.5rem solid ${color}` }}
     >
       <div className="flex gap-x-3">
         <div className="h-12 w-12 bg-secondary rounded-full" />
