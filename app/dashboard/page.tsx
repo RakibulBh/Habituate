@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState, useCallback } from "react";
 import { getUserHabitsByDay } from "./_actions";
 import { HabitType } from "@/types/types";
+import HabitSection from "@/components/habit-section";
 
 function Dashboard() {
   const { user } = useUser();
@@ -29,18 +30,20 @@ function Dashboard() {
   useEffect(() => {
     if (!user) return;
     const fetchCurrentDayHabits = async () => {
+      console.log(currentDate);
       try {
-        const habits = await getUserHabitsByDay({
+        const fetchedHabits = await getUserHabitsByDay({
           clerkUserId: user.id,
           day: getDayOfWeek(currentDate),
         });
-        setHabits(habits);
+        setHabits(fetchedHabits);
       } catch (e) {
         console.error(e);
       }
     };
     fetchCurrentDayHabits();
-  }, [currentDate, user, getDayOfWeek]);
+    console.log("Rerendered");
+  }, [user, currentDate, getDayOfWeek]);
 
   const views = ["All Day", "Morning", "Afternoon", "Evening"];
 
@@ -65,10 +68,7 @@ function Dashboard() {
             >
               {view}
               {currentView === view && (
-                <span
-                  className="absolute bottom-0 left-0 bg-secondary h-1 rounded-xl"
-                  style={{ width: "3rem" }}
-                ></span>
+                <span className="absolute bottom-0 w-[3rem] left-0 bg-secondary h-1 rounded-xl"></span>
               )}
             </h1>
           ))}
@@ -80,22 +80,7 @@ function Dashboard() {
             <GoalCard />
           </div>
         </div>
-        <div className="space-y-2">
-          <h1 className="font-light text-gray-500 text-2xl">Habits</h1>
-          <div className="space-y-2">
-            {habits.map((habit) => (
-              <Habit
-                key={habit._id}
-                habitId={habit._id}
-                title={habit.title}
-                date={currentDate}
-                frequency={habit.frequency}
-                color={habit.color}
-                unit={habit.unit}
-              />
-            ))}
-          </div>
-        </div>
+        <HabitSection habits={habits} currentDate={currentDate} />
       </div>
     </section>
   );

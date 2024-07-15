@@ -75,19 +75,23 @@ const deleteHabitInstance = async ({
 
 const findHabitInstance = async ({
   clerkUserId,
+  habitId,
   date,
 }: {
   clerkUserId: string;
+  habitId: string;
   date: string;
 }) => {
   try {
     const user = await findUserByClerkId(clerkUserId);
     const habitInstance = await HabitInstance.findOne({
       userId: user._id,
+      habitId,
       date,
     });
     return JSON.parse(JSON.stringify(habitInstance)) || null;
   } catch (e) {
+    console.error(`Error finding habit instance: ${e}`);
     return null;
   }
 };
@@ -107,7 +111,11 @@ const createHabitInstance = async ({
 }) => {
   try {
     const user = await findUserByClerkId(clerkUserId);
-    const habitInstance = await findHabitInstance({ clerkUserId, date });
+    const habitInstance = await findHabitInstance({
+      clerkUserId,
+      date,
+      habitId,
+    });
 
     if (!habitInstance) {
       const newHabitInstance = new HabitInstance({

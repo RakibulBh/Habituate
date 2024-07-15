@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { findHabitInstance } from "@/app/dashboard/_actions";
 import { useUser } from "@clerk/nextjs";
 import { HabitInstance } from "@/types/types";
+import { set } from "mongoose";
 
 const Habit = ({
   title,
@@ -26,31 +27,29 @@ const Habit = ({
     null
   );
 
-  //TODO: Habit progress does not change properly when swithcing between dates
-
   useEffect(() => {
     const isInstance = async () => {
       if (!user) return null;
-      const habitInstance = await findHabitInstance({
+      const fetchedHabitInstance = await findHabitInstance({
+        habitId,
         clerkUserId: user.id,
         date,
       });
 
-      if (!habitInstance) {
-        return null;
+      if (!fetchedHabitInstance) {
+        setHabitInstance(null);
       }
-      console.log("It's an instance!");
-      setHabitInstance(habitInstance);
+      setHabitInstance(fetchedHabitInstance);
     };
 
     isInstance();
-  }, []);
+  }, [user, date]);
 
   return (
     <div
       className={cn(
         "bg-white border-l-8 rounded-md p-4 flex items-center justify-between",
-        `border-l-${color}`
+        `border-l-[${color}]`
       )}
     >
       <div className="flex gap-x-3">
