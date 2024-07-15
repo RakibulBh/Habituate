@@ -13,9 +13,10 @@ import HabitSection from "@/components/habit-section";
 
 function Dashboard() {
   const { user } = useUser();
+
   const [currentDate, setCurrentDate] = useState(() => {
     const date = new Date();
-    return date.toISOString().split("T")[0]; // Format: yyyy-mm-dd
+    return date.toISOString().split("T")[0];
   });
 
   const getDayOfWeek = useCallback((dateString: string) => {
@@ -26,6 +27,7 @@ function Dashboard() {
   const [currentView, setCurrentView] = useState("All Day");
   const [baseDate, setBaseDate] = useState(new Date());
   const [habits, setHabits] = useState<HabitType[]>([]);
+  const [filteredHabits, setFilteredHabits] = useState<HabitType[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -42,8 +44,32 @@ function Dashboard() {
       }
     };
     fetchCurrentDayHabits();
-    console.log("Rerendered");
   }, [user, currentDate, getDayOfWeek]);
+
+  useEffect(() => {
+    const filterHabits = () => {
+      if (currentView === "All Day") {
+        return habits;
+      }
+
+      return habits.filter((habit) => {
+        const time = habit.time.split(":");
+        const hour = parseInt(time[0]);
+
+        if (currentView === "Morning") {
+          return hour >= 5 && hour < 12;
+        } else if (currentView === "Afternoon") {
+          return hour >= 12 && hour < 17;
+        } else if (currentView === "Evening") {
+          return hour >= 17 || hour < 5;
+        }
+
+        return false;
+      });
+    };
+
+    setFilteredHabits(filterHabits());
+  }, [currentView, habits]);
 
   const views = ["All Day", "Morning", "Afternoon", "Evening"];
 
@@ -80,7 +106,7 @@ function Dashboard() {
             <GoalCard />
           </div>
         </div>
-        <HabitSection habits={habits} currentDate={currentDate} />
+        <HabitSection habits={filteredHabits} currentDate={currentDate} />
       </div>
     </section>
   );

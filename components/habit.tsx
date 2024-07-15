@@ -26,8 +26,6 @@ const Habit = ({
     null
   );
 
-  console.log(color);
-
   useEffect(() => {
     const isInstance = async () => {
       if (!user) return null;
@@ -48,10 +46,8 @@ const Habit = ({
 
   return (
     <div
-      className={cn(
-        `bg-white rounded-md p-4 flex items-center justify-between`
-      )}
       style={{ borderLeft: `0.5rem solid ${color}` }}
+      className="bg-white rounded-md p-4 flex items-center justify-between"
     >
       <div className="flex gap-x-3">
         <div className="h-12 w-12 bg-secondary rounded-full" />
