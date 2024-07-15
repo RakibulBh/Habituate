@@ -99,7 +99,6 @@ const EditHabitDialog = ({
             </div>
           </form>
         </FormProvider>
-        {JSON.stringify({ habitId, date, goal, value, unit })}
       </DialogContent>
     </Dialog>
   );

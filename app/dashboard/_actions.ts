@@ -124,6 +124,7 @@ const createHabitInstance = async ({
         value,
         goal,
         date,
+        completed: value >= goal,
       });
       await newHabitInstance.save();
     } else {
