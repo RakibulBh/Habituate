@@ -3,21 +3,18 @@
 import AddHabitDialog from "@/components/add-habit-dialog";
 import { DayCarousel } from "@/components/day-carousel";
 import GoalCard from "@/components/goal-card";
-import Habit from "@/components/habit";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState, useCallback } from "react";
 import { getUserHabitsByDay } from "./_actions";
 import { HabitType } from "@/types/types";
 import HabitSection from "@/components/habit-section";
+import { useDateStore } from "@/store/date";
 
 function Dashboard() {
   const { user } = useUser();
 
-  const [currentDate, setCurrentDate] = useState(() => {
-    const date = new Date();
-    return date.toISOString().split("T")[0];
-  });
+  const date = useDateStore((state) => state.date);
 
   const getDayOfWeek = useCallback((dateString: string) => {
     const date = new Date(dateString);
@@ -25,18 +22,16 @@ function Dashboard() {
   }, []);
 
   const [currentView, setCurrentView] = useState("All Day");
-  const [baseDate, setBaseDate] = useState(new Date());
   const [habits, setHabits] = useState<HabitType[]>([]);
   const [filteredHabits, setFilteredHabits] = useState<HabitType[]>([]);
 
   useEffect(() => {
     if (!user) return;
     const fetchCurrentDayHabits = async () => {
-      console.log(currentDate);
       try {
         const fetchedHabits = await getUserHabitsByDay({
           clerkUserId: user.id,
-          day: getDayOfWeek(currentDate),
+          day: getDayOfWeek(date.currentDate),
         });
         setHabits(fetchedHabits);
       } catch (e) {
@@ -44,7 +39,7 @@ function Dashboard() {
       }
     };
     fetchCurrentDayHabits();
-  }, [user, currentDate, getDayOfWeek]);
+  }, [user, date.currentDate, getDayOfWeek]);
 
   useEffect(() => {
     const filterHabits = () => {
@@ -76,11 +71,7 @@ function Dashboard() {
   return (
     <section className="h-screen container flex flex-col items-center">
       <AddHabitDialog />
-      <DayCarousel
-        baseDate={baseDate}
-        setCurrentDate={setCurrentDate}
-        currentDate={currentDate}
-      />
+      <DayCarousel />
       <div className="container px-20 xl:px-80 flex flex-col mt-10 gap-y-5">
         <div className="flex justify-between">
           {views.map((view, index) => (
@@ -106,7 +97,7 @@ function Dashboard() {
             <GoalCard />
           </div>
         </div>
-        <HabitSection habits={filteredHabits} currentDate={currentDate} />
+        <HabitSection habits={filteredHabits} currentDate={date.currentDate} />
       </div>
     </section>
   );

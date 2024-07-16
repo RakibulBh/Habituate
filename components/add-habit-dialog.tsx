@@ -35,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { revalidatePath } from "next/cache";
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
