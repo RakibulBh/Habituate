@@ -2,14 +2,14 @@
 
 import AddHabitDialog from "@/components/add-habit-dialog";
 import { DayCarousel } from "@/components/day-carousel";
-import GoalCard from "@/components/goal-card";
-import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState, useCallback } from "react";
 import { getUserHabitsByDay } from "./_actions";
 import { HabitType } from "@/types/types";
 import HabitSection from "@/components/habit-section";
 import { useDateStore } from "@/store/date";
+import CurrentView from "@/components/current-view";
+import GoalsSection from "@/components/goals-section";
 
 function Dashboard() {
   const { user } = useUser();
@@ -66,36 +66,17 @@ function Dashboard() {
     setFilteredHabits(filterHabits());
   }, [currentView, habits]);
 
-  const views = ["All Day", "Morning", "Afternoon", "Evening"];
-
   return (
     <section className="h-screen container flex flex-col items-center">
       <AddHabitDialog />
       <DayCarousel />
       <div className="container px-20 xl:px-80 flex flex-col mt-10 gap-y-5">
-        <div className="flex justify-between">
-          {views.map((view, index) => (
-            <h1
-              key={index}
-              onClick={() => setCurrentView(view)}
-              className={cn(
-                "text-xl font-light hover:cursor-pointer relative pb-1",
-                currentView === view && "relative"
-              )}
-            >
-              {view}
-              {currentView === view && (
-                <span className="absolute bottom-0 w-[3rem] left-0 bg-secondary h-1 rounded-xl"></span>
-              )}
-            </h1>
-          ))}
-        </div>
         <div className="space-y-2">
-          <h1 className="font-light text-gray-500 text-2xl">Goals</h1>
-          <div className="space-y-2">
-            <GoalCard />
-            <GoalCard />
-          </div>
+          <CurrentView
+            currentView={currentView}
+            setCurrentView={setCurrentView}
+          />
+          <GoalsSection />
         </div>
         <HabitSection habits={filteredHabits} currentDate={date.currentDate} />
       </div>
