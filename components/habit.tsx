@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { findHabitInstance } from "@/app/dashboard/_actions";
 import { useUser } from "@clerk/nextjs";
 import { HabitInstance } from "@/types/types";
+import { useQuery } from "@tanstack/react-query";
 
 const Habit = ({
   title,
@@ -22,27 +23,23 @@ const Habit = ({
   color: string;
 }) => {
   const { user } = useUser();
-  const [habitInstance, setHabitInstance] = useState<HabitInstance | null>(
-    null
-  );
 
-  useEffect(() => {
-    const isInstance = async () => {
-      if (!user) return null;
-      const fetchedHabitInstance = await findHabitInstance({
-        habitId,
-        clerkUserId: user.id,
-        date,
-      });
-
-      if (!fetchedHabitInstance) {
-        setHabitInstance(null);
-      }
-      setHabitInstance(fetchedHabitInstance);
-    };
-
-    isInstance();
-  }, [user, date]);
+  const {
+    data: habitInstance,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["habitInstance", user?.id, habitId, date],
+    queryFn: () =>
+      user
+        ? findHabitInstance({
+            clerkUserId: user.id,
+            habitId,
+            date,
+          })
+        : Promise.resolve([]),
+    enabled: !!user,
+  });
 
   return (
     <div

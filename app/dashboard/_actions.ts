@@ -49,6 +49,7 @@ const getUserHabitsByDay = async ({
 }) => {
   try {
     const user = await findUserByClerkId(clerkUserId);
+    if (!user) return [];
     const habits = await Habit.find({ userId: user._id, repeat: day });
     return JSON.parse(JSON.stringify(habits));
   } catch (error) {
@@ -127,7 +128,7 @@ const createHabitInstance = async ({
         completed: value >= goal,
       });
       await newHabitInstance.save();
-      revalidatePath("/dashboard");
+      revalidatePath("/");
     } else {
       await HabitInstance.updateOne(
         { _id: habitInstance._id },

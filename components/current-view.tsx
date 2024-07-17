@@ -1,13 +1,14 @@
-import { cn } from "@/lib/utils";
+"use client";
 import React from "react";
+import { cn } from "@/lib/utils";
+import { useViewStore } from "@/store/view";
 
-const CurrentView = ({
-  currentView,
-  setCurrentView,
-}: {
-  currentView: string;
-  setCurrentView: (view: string) => void;
-}) => {
+const CurrentView = () => {
+  const { currentView, setCurrentView } = useViewStore((state) => ({
+    currentView: state.currentView,
+    setCurrentView: state.setCurrentView,
+  }));
+
   const views = ["All Day", "Morning", "Afternoon", "Evening"];
 
   return (

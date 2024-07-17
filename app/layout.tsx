@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import QueryProvider from "@/providers/query-client-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,7 +30,7 @@ export default function RootLayout({
           <div>
             <Toaster position="top-center" reverseOrder={false} />
           </div>
-          {children}
+          <QueryProvider>{children}</QueryProvider>
         </body>
       </html>
     </ClerkProvider>

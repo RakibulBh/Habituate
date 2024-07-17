@@ -79,6 +79,7 @@ const AddHabitDialog = () => {
         clerkUserID: user.id,
         ...values,
       });
+      form.reset();
       toast.success("Habit created successfully");
     } catch (error) {
       if (error instanceof MongooseError) {

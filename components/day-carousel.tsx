@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { format, addDays, subDays, startOfWeek } from "date-fns";
 import {
