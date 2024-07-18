@@ -5,6 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserHabitsByDay } from "@/app/dashboard/_actions";
 import { useDateStore } from "@/store/date";
 import { useUser } from "@clerk/nextjs";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useState } from "react";
 
 const HabitSection = () => {
   const { user } = useUser();
@@ -30,7 +33,8 @@ const HabitSection = () => {
   return (
     <div className="space-y-2">
       <h1 className="font-light text-gray-500 text-2xl">Habits</h1>
-      <div className="space-y-2 h-[26rem] overflow-y-auto">
+      <div className="space-y-2 max-h-[26rem] overflow-y-auto">
+        {isLoading && <Skeleton height="5rem" count={4} />}
         {habits &&
           habits.map((habit: HabitType) => (
             <Habit

@@ -6,7 +6,7 @@ const LevelSystem = () => {
   const { user } = useUser();
 
   return (
-    <div className="flex h-20 items-center w-full px-2 py-4">
+    <div className="flex h-20 items-center w-full px-6 py-4">
       <div className="w-full flex gap-x-3">
         <div>
           <img

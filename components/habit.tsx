@@ -44,10 +44,10 @@ const Habit = ({
   return (
     <div
       style={{ borderLeft: `0.5rem solid ${color}` }}
-      className="bg-white rounded-md p-4 flex items-center justify-between"
+      className="bg-[#F8F8F8] rounded-md px-4 py-3 flex items-center justify-between"
     >
-      <div className="flex gap-x-3">
-        <div className="h-12 w-12 bg-secondary rounded-full" />
+      <div className="flex gap-x-3 items-center">
+        <div className="h-16 w-16 bg-gray-300 rounded-md" />
         <div className="space-y-[1px]">
           <h1>{title}</h1>
           <p className="text-gray-300">{`${

@@ -17,7 +17,7 @@ export const MobileSidebar = () => (
     </SheetTrigger>
     <SheetContent
       side="left"
-      className="p-0 m-0 w-[20rem] rounded-r-md bg-[#3B3478]"
+      className="p-0 m-0 w-[22rem] xl:w-[25rem] rounded-r-md"
     >
       <Sidebar />
     </SheetContent>

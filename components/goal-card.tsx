@@ -2,7 +2,7 @@ import React from "react";
 
 const GoalCard = () => {
   return (
-    <div className="bg-white rounded-md p-4 flex flex-col justify-between">
+    <div className="bg-[#F8F8F8] rounded-md p-4 flex flex-col justify-between">
       <div className="flex items-center space-x-4">
         <div className="h-12 w-12 bg-secondary rounded-full"></div>
         <div>
