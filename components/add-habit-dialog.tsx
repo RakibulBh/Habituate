@@ -93,8 +93,8 @@ const AddHabitDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="fixed text-5xl hover:bg-secondary hover:text-white bottom-4 right-4 bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg cursor-pointer">
-          +
+        <Button className="px-4 py-2 w-full bg-[#A855F7]">
+          + Add New Habit
         </Button>
       </DialogTrigger>
       <DialogContent>

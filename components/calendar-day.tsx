@@ -25,9 +25,9 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
   return (
     <div
       className={cn(
-        "text-center items-center flex flex-col justify-center text-secondary w-16 h-20 rounded-xl hover:cursor-pointer",
+        "text-center items-center flex flex-col justify-center text-[#6366F1] w-16 h-20 rounded-xl hover:cursor-pointer",
         isCurrentDay
-          ? "border-2 border-secondary bg-[#dbe9e3] text-secondary "
+          ? "border-2 border-[#6366F1] bg-[#dbdcfc] text-[#6366F1] "
           : "bg-[#F8F8F8]"
       )}
       onClick={handleClick}

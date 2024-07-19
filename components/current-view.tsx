@@ -24,7 +24,7 @@ const CurrentView = () => {
         >
           {view}
           {currentView === view && (
-            <span className="absolute bottom-0 w-[3rem] left-0 bg-secondary h-1 rounded-xl"></span>
+            <span className="absolute bottom-0 w-[3rem] left-0 bg-[#6366F1] h-1 rounded-xl"></span>
           )}
         </h1>
       ))}

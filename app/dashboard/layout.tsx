@@ -15,12 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <main className="flex">
-      <div className="hidden xl:block">
+      <div className="">
         <Sidebar />
       </div>
-      <div className="xl:hidden block">
+      {/* <div className="xl:hidden block">
         <MobileSidebar />
-      </div>
+      </div> */}
       <div className="flex-1">{children}</div>
     </main>
   );

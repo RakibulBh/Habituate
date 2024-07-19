@@ -89,7 +89,7 @@ type CalendarProps =
       mode: "range";
     } & RangeProps);
 
-const Calendar = ({
+const MonthCalendar = ({
   mode = "single",
   weekStartsOn = 1,
   numberOfMonths = 1,
@@ -326,6 +326,6 @@ const Calendar = ({
   );
 };
 
-Calendar.displayName = "Calendar";
+MonthCalendar.displayName = "Calendar";
 
-export { Calendar, type Matcher };
+export { MonthCalendar, type Matcher };
