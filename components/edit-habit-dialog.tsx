@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,40 +15,66 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import {
-  createHabitInstance,
-  findHabitInstance,
-} from "@/app/dashboard/_actions";
 import { useUser } from "@clerk/nextjs";
-import { HabitInstance } from "@/types/types";
+import { SquarePen } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createHabitInstance } from "@/app/home/_actions";
+import { Switch } from "./ui/switch";
+import { cn } from "@/lib/utils";
+
+type CreateHabitInstanceParams = {
+  clerkUserId: string;
+  habitId: string;
+  value: number;
+  date: string;
+  goal: number;
+};
 
 const formSchema = z.object({
   currValue: z.preprocess((val) => Number(val), z.number()),
 });
 
 const EditHabitDialog = ({
+  title,
   habitId,
   date,
   goal,
+  completed,
   value,
   unit,
+  open,
+  onOpenChange,
 }: {
+  title: string;
   habitId: string;
   date: string;
   goal: number;
+  completed: boolean;
   value: number;
   unit: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) => {
+  const queryClient = useQueryClient();
   const { user } = useUser();
 
-  const methods = useForm<z.infer<typeof formSchema>>({
+  const { mutateAsync: updateHabitProgress } = useMutation({
+    mutationFn: async (params: CreateHabitInstanceParams) => {
+      await createHabitInstance(params);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      onOpenChange(false);
+    },
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       currValue: value,
@@ -57,45 +83,75 @@ const EditHabitDialog = ({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
-    await createHabitInstance({
-      clerkUserId: user.id,
-      habitId,
-      value: values.currValue,
-      date,
-      goal,
-    });
+
+    try {
+      await updateHabitProgress({
+        clerkUserId: user.id,
+        habitId,
+        value: values.currValue,
+        date,
+        goal,
+      });
+    } catch (error) {
+      console.error(`Error creating habit instance: ${error}`);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-tertiary rounded-md w-12 h-12 flex items-center justify-center hover:cursor-pointer hover:bg-secondary text-4xl text-secondary hover:text-white">
-          +
-        </Button>
+        <div className="bg-white text-purple-400">
+          <SquarePen />
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Habit</DialogTitle>
-          <DialogDescription>
-            Here you can update the value of your habit.
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>Habit desc</DialogDescription>
         </DialogHeader>
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              name="currValue"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Value</FormLabel>
-                  <FormControl>
-                    <Input className="w-20" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end">
-              <Button type="submit">Submit</Button>
+        <FormProvider {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex gap-x-2 items-center">
+                <p>Status</p>
+                <Switch
+                  className="text-red-400"
+                  checked={completed}
+                  disabled
+                  aria-readonly
+                />
+              </div>
+
+              <div className="w-20 h-20 border-8 rounded-full border-gray-200 flex items-center justify-center">
+                <p className="text-md font-bold">
+                  {Math.round(value / goal) * 100}%
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-sm">Current progress</h1>
+              <div className="flex items-center gap-x-2">
+                <FormField
+                  name="currValue"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input className="w-20" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <p>
+                  / {goal} {unit}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-x-2 justify-end">
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Save progress</Button>
             </div>
           </form>
         </FormProvider>

@@ -2,7 +2,7 @@
 import { HabitType } from "@/types/types";
 import Habit from "./habit";
 import { useQuery } from "@tanstack/react-query";
-import { getUserHabitsByDay } from "@/app/dashboard/_actions";
+import { getUserHabitsByDay } from "@/app/home/_actions";
 import { useDateStore } from "@/store/date";
 import { useUser } from "@clerk/nextjs";
 import Skeleton from "react-loading-skeleton";

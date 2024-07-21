@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
 import EditHabitDialog from "./edit-habit-dialog";
 import { cn } from "@/lib/utils";
-import { findHabitInstance } from "@/app/dashboard/_actions";
+import { findHabitInstance } from "@/app/home/_actions";
 import { useUser } from "@clerk/nextjs";
 import { HabitInstance } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +24,7 @@ const Habit = ({
   color: string;
 }) => {
   const { user } = useUser();
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const {
     data: habitInstance,
@@ -57,11 +59,15 @@ const Habit = ({
         </div>
       </div>
       <EditHabitDialog
+        title={title}
         date={date}
         habitId={habitId}
+        completed={habitInstance ? habitInstance.value >= frequency : false}
         value={habitInstance ? habitInstance.value : 0}
         goal={frequency}
         unit={unit}
+        open={isDialogOpen}
+        onOpenChange={setDialogOpen}
       />
     </div>
   );

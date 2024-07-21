@@ -1,7 +1,6 @@
 import AddHabitDialog from "@/components/add-habit-dialog";
 import { DayCarousel } from "@/components/day-carousel";
 import { useUser } from "@clerk/nextjs";
-import React, { useEffect, useState, useCallback } from "react";
 import HabitSection from "@/components/habit-section";
 import CurrentView from "@/components/current-view";
 import GoalsSection from "@/components/goals-section";

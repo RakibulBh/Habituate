@@ -38,7 +38,7 @@ const Sidebar = () => {
   const { user } = useUser();
 
   return (
-    <div className="w-[20rem] bg-gray-100 h-screen flex flex-col justify-between px-6 py-6">
+    <div className="w-[20rem] xl:w-[25rem] bg-gray-100 h-screen flex flex-col justify-between px-6 py-6">
       <div className="w-full space-y-4">
         <div className="flex items-center gap-x-4">
           {user?.imageUrl && (

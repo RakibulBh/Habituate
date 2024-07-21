@@ -30,7 +30,7 @@ export function DayCarousel() {
   const weeks = getWeeksAroundCurrentDate();
 
   return (
-    <Carousel className="mt-10 sm:w-[40rem]  xl:w-[55rem]">
+    <Carousel className="px-10 mt-10 sm:w-[40rem] xl:w-[75rem]">
       <CarouselContent>
         {weeks.map((week, weekIndex) => (
           <CarouselItem
@@ -51,8 +51,8 @@ export function DayCarousel() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      {/* <CarouselPrevious />
+      <CarouselNext /> */}
     </Carousel>
   );
 }

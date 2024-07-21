@@ -128,7 +128,6 @@ const createHabitInstance = async ({
         completed: value >= goal,
       });
       await newHabitInstance.save();
-      revalidatePath("/");
     } else {
       await HabitInstance.updateOne(
         { _id: habitInstance._id },

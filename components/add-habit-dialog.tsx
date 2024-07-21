@@ -23,7 +23,7 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import DaySelector from "./day-selector";
-import { createHabit } from "@/app/dashboard/_actions";
+import { createHabit } from "@/app/home/_actions";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { MongooseError } from "mongoose";
