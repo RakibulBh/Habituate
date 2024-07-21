@@ -7,15 +7,15 @@ function HabitStatsRow() {
       <div className="justify-between flex items-center border-b-2 pb-2 border-gray-300">
         <div className="space-y-2">
           <p className="text-sm text-gray-500">Completion rate</p>
-          <p className="font-bold">92%</p>
+          <p className="font-semibold">92%</p>
         </div>
         <div className="space-y-2">
           <p className="text-sm text-gray-500">Best streak</p>
-          <p className="font-bold">14 days</p>
+          <p className="font-semibold">14 days</p>
         </div>
         <div className="space-y-2">
           <p className="text-sm text-gray-500">Total Completions</p>
-          <p className="font-bold">28</p>
+          <p className="font-semibold">28</p>
         </div>
       </div>
     </div>
