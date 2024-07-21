@@ -8,49 +8,62 @@ import {
   Zap,
   Bell,
   LogIn,
+  Target,
 } from "lucide-react";
-import { useUser } from "@clerk/nextjs"; // Assuming you have this import path correct for Clerk's useUser hook
+import { SignOutButton, useUser } from "@clerk/nextjs"; // Assuming you have this import path correct for Clerk's useUser hook
 import Image from "next/image";
 import AddHabitDialog from "./add-habit-dialog";
 import { MonthCalendar } from "./calendar";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import UserProfileImage from "./image-with-fallback";
 
 const navLinks = [
-  { Icon: House, title: "Home" },
-  { Icon: Calendar, title: "Daily Habits" },
-  { Icon: BarChart2, title: "Statistics" },
-  { Icon: Cog, title: "Achievements" },
+  { Icon: House, title: "Home", path: "/home" },
+  { Icon: Calendar, title: "Daily Habits", path: "/habits" },
+  { Icon: Target, title: "Goals", path: "/goals" },
+  { Icon: BarChart2, title: "Statistics", path: "/statistics" },
+  { Icon: Cog, title: "Achievements", path: "/achievements" },
 ];
 
 function Divider() {
   return <div className="h-[2px] rounded-xl bg-[#DBDBDB]" />;
 }
 
-function SidebarItem({ Icon, title }: { Icon: React.FC; title: string }) {
+function SidebarItem({
+  Icon,
+  title,
+  path,
+  isActive,
+}: {
+  Icon: React.FC;
+  title: string;
+  path: string;
+  isActive: boolean;
+}) {
   return (
-    <div className="flex items-center gap-x-4 cursor-pointer">
-      <Icon />
-      <p className="text-md font-semibold">{title}</p>
-    </div>
+    <Link href={path}>
+      <div
+        className={`flex items-center gap-x-4 cursor-pointer p-2 rounded-md transition-colors duration-200 ${
+          isActive ? "bg-purple-200 text-purple-600" : "text-gray-800"
+        } hover:bg-purple-100 hover:text-purple-600`}
+      >
+        <Icon />
+        <p className="text-md font-semibold">{title}</p>
+      </div>
+    </Link>
   );
 }
 
 const Sidebar = () => {
   const { user } = useUser();
+  const pathname = usePathname();
 
   return (
     <div className="w-[20rem] xl:w-[25rem] bg-gray-100 h-screen flex flex-col justify-between px-6 py-6">
       <div className="w-full space-y-4">
         <div className="flex items-center gap-x-4">
-          {user?.imageUrl && (
-            <Image
-              className="rounded-full"
-              loader={({ src }) => src}
-              src={user.imageUrl}
-              width={60}
-              height={60}
-              alt="profile-url"
-            />
-          )}
+          <UserProfileImage user={user} />
           <div>
             <h1 className="font-semibold text-xl">{user?.fullName}</h1>
             <p className="text-gray-500 text-md">"Motivation is good!"</p>
@@ -67,9 +80,15 @@ const Sidebar = () => {
           </div>
         </div>
         <Divider />
-        <div className="flex flex-col space-y-8">
+        <div className="flex flex-col space-y-2">
           {navLinks.map((link, i) => (
-            <SidebarItem key={i} Icon={link.Icon} title={link.title} />
+            <SidebarItem
+              key={i}
+              Icon={link.Icon}
+              title={link.title}
+              path={link.path}
+              isActive={pathname === link.path}
+            />
           ))}
         </div>
         <Divider />
@@ -77,8 +96,6 @@ const Sidebar = () => {
           <AddHabitDialog />
         </div>
         <div className="w-full mx-auto">
-          {" "}
-          {/* Add mx-auto here */}
           <MonthCalendar />
         </div>
       </div>
@@ -100,7 +117,7 @@ const Sidebar = () => {
           </div>
           <div className="flex gap-x-2">
             <LogIn />
-            <p>Log out</p>
+            {user && <SignOutButton />}
           </div>
         </div>
       </div>

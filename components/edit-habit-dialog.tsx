@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +26,6 @@ import { SquarePen } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createHabitInstance } from "@/app/home/_actions";
 import { Switch } from "./ui/switch";
-import { cn } from "@/lib/utils";
 
 type CreateHabitInstanceParams = {
   clerkUserId: string;
@@ -81,6 +80,10 @@ const EditHabitDialog = ({
     },
   });
 
+  useEffect(() => {
+    form.reset({ currValue: value });
+  }, [value, form]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
 
@@ -123,8 +126,8 @@ const EditHabitDialog = ({
               </div>
 
               <div className="w-20 h-20 border-8 rounded-full border-gray-200 flex items-center justify-center">
-                <p className="text-md font-bold">
-                  {Math.round(value / goal) * 100}%
+                <p className="text-sm font-bold">
+                  {((value / goal) * 100).toFixed(2)}%
                 </p>
               </div>
             </div>

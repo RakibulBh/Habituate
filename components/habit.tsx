@@ -2,10 +2,8 @@
 
 import React, { useState } from "react";
 import EditHabitDialog from "./edit-habit-dialog";
-import { cn } from "@/lib/utils";
 import { findHabitInstance } from "@/app/home/_actions";
 import { useUser } from "@clerk/nextjs";
-import { HabitInstance } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 
 const Habit = ({
@@ -26,11 +24,7 @@ const Habit = ({
   const { user } = useUser();
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const {
-    data: habitInstance,
-    error,
-    isLoading,
-  } = useQuery({
+  const { data: habitInstance, isLoading } = useQuery({
     queryKey: ["habitInstance", user?.id, habitId, date],
     queryFn: () =>
       user
@@ -39,7 +33,7 @@ const Habit = ({
             habitId,
             date,
           })
-        : Promise.resolve([]),
+        : Promise.resolve(null),
     enabled: !!user,
   });
 
@@ -53,9 +47,12 @@ const Habit = ({
         <div className="h-16 w-16 bg-gray-300 rounded-md" />
         <div className="space-y-[1px]">
           <h1>{title}</h1>
-          <p className="text-gray-300">{`${
-            habitInstance ? habitInstance.value : 0
-          } / ${frequency} ${unit}`}</p>
+          <span className="flex items-center space-x-2">
+            <p>{`${habitInstance ? habitInstance.value : 0} `}</p>
+            <p className="text-gray-400">
+              / {frequency} {unit}
+            </p>
+          </span>
         </div>
       </div>
       <EditHabitDialog
