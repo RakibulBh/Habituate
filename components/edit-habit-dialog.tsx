@@ -96,6 +96,7 @@ const EditHabitDialog = ({
         date,
         goal,
       });
+      // The statistics will be updated automatically in the createHabitInstance function
     } catch (error) {
       console.error(`Error creating habit instance: ${error}`);
     }
