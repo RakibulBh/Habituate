@@ -3,175 +3,120 @@
 import HabitInstance from "@/models/HabitInstancesSchema";
 import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
-import { HabitType } from "@/types/types";
+import UserStats from "@/models/UserStatsSchema";
 
-// Helper function to find a user by their Clerk ID
+//TODO: Fix habit completion rate so it coniders when habit was made until present
+//TODO: Habit title does not show on individual habit analysis
+//TODO: implement predictive insights
+
 const findUserByClerkId = async (clerkUserID: string) => {
   const user = await User.findOne({ clerkUserID });
   if (!user) throw new Error("User not found");
   return user;
 };
 
-// Helper function to find a user by their ID
-const findUserById = async (userId: string) => {
-  const user = await User.findById(userId);
-  if (!user) throw new Error("User not found");
-  return user;
-};
+const updateUserStats = async (clerkUserId: string) => {
+  const user = await findUserByClerkId(clerkUserId);
+  const habits = await Habit.find({ userId: user._id });
+  const allHabitInstances = await HabitInstance.find({ userId: user._id });
 
-// Function to get the longest streak of perfect days
-const getLongestStreak = async (clerkUserId: string) => {
-  try {
-    const user = await findUserByClerkId(clerkUserId);
-    const userId = user._id;
+  let totalCompletions = 0;
+  let totalPossibleCompletions = 0;
+  let longestStreak = 0;
+  let currentStreak = 0;
+  const habitStats = [];
 
-    // Fetch all habit instances for the user
-    const habitInstances = await HabitInstance.find({ userId }).lean();
+  for (const habit of habits) {
+    const habitCompletions = allHabitInstances.filter(
+      (instance) =>
+        instance.habitId.toString() === habit._id.toString() &&
+        instance.completed
+    );
 
-    // Group instances by date
-    const dateGroups: { [key: string]: any[] } = {};
-    habitInstances.forEach((instance) => {
-      const date = instance.date.toISOString().split("T")[0];
-      if (!dateGroups[date]) {
-        dateGroups[date] = [];
+    const habitInstancesForHabit = await HabitInstance.find({
+      habitId: habit._id,
+    }).sort("date");
+
+    let bestStreak = 0;
+    let currentHabitStreak = 0;
+
+    for (let i = 0; i < habitInstancesForHabit.length; i++) {
+      if (habitInstancesForHabit[i].completed) {
+        currentHabitStreak++;
+        if (currentHabitStreak > bestStreak) {
+          bestStreak = currentHabitStreak;
+        }
+      } else {
+        currentHabitStreak = 0;
       }
-      dateGroups[date].push(instance);
+    }
+
+    const totalPossible =
+      habit.repeat.length *
+      Math.ceil(
+        (Date.now() - habit.createdAt.getTime()) / (7 * 24 * 60 * 60 * 1000)
+      );
+    const completionRate =
+      totalPossible > 0 ? habitCompletions.length / totalPossible : 0;
+
+    habitStats.push({
+      habitId: habit._id,
+      completions: habitCompletions.length,
+      bestStreak,
+      completionRate,
     });
 
-    // Determine perfect days
-    const perfectDays: Date[] = [];
-    for (const [date, instances] of Object.entries(dateGroups)) {
-      if (instances.every((instance) => instance.completed)) {
-        perfectDays.push(new Date(date));
-      }
-    }
-
-    // Sort perfect days
-    perfectDays.sort((a, b) => a.getTime() - b.getTime());
-
-    // Calculate longest streak
-    let longestStreak = 0;
-    let currentStreak = 1;
-
-    for (let i = 1; i < perfectDays.length; i++) {
-      if (
-        perfectDays[i].getTime() - perfectDays[i - 1].getTime() ===
-        86400000
-      ) {
-        // 1 day in milliseconds
-        currentStreak += 1;
-      } else {
-        longestStreak = Math.max(longestStreak, currentStreak);
-        currentStreak = 1;
-      }
-    }
-    longestStreak = Math.max(longestStreak, currentStreak);
-
-    return longestStreak;
-  } catch (error) {
-    console.error(`Error calculating longest streak: ${error}`);
-    throw new Error("Could not calculate longest streak");
+    totalCompletions += habitCompletions.length;
+    totalPossibleCompletions += totalPossible;
   }
-};
 
-// Function to find habits by user ID
-const findHabitsByUserId = async (userId: string) => {
-  const habits = await Habit.find({ userId });
-  return habits;
-};
-
-const getTotalCompletionsForHabit = async (habitId: string) => {
-  const completedInstances = await HabitInstance.countDocuments({
-    habitId,
-    completed: true,
+  const dailyCompletions: {
+    [key: string]: { total: number; completed: number };
+  } = {};
+  allHabitInstances.forEach((instance) => {
+    const date = instance.date.toISOString().split("T")[0];
+    if (!dailyCompletions[date]) {
+      dailyCompletions[date] = { total: 0, completed: 0 };
+    }
+    dailyCompletions[date].total++;
+    if (instance.completed) {
+      dailyCompletions[date].completed++;
+    }
   });
-  return completedInstances;
-};
 
-// Function to get the longest streak for a single habit
-// Function to get the longest streak for a single habit
-const getLongestStreakForHabit = async (habitId: string) => {
-  const habitInstances = await HabitInstance.find({
-    habitId,
-    completed: true,
-  }).lean();
-  if (habitInstances.length === 0) return 0;
-
-  // Sort instances by date
-  habitInstances.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-
-  let longestStreak = 1;
-  let currentStreak = 1;
-
-  for (let i = 1; i < habitInstances.length; i++) {
-    const currentDate = new Date(habitInstances[i].date);
-    const previousDate = new Date(habitInstances[i - 1].date);
-
-    const diffInTime = currentDate.getTime() - previousDate.getTime();
-    const diffInDays = diffInTime / (1000 * 3600 * 24);
-
-    // Check if the difference in days is exactly 7 days (weekly habit)
-    if (diffInDays === 7) {
-      currentStreak += 1;
+  const sortedDates = Object.keys(dailyCompletions).sort();
+  for (const date of sortedDates) {
+    if (dailyCompletions[date].completed === dailyCompletions[date].total) {
+      currentStreak++;
+      if (currentStreak > longestStreak) {
+        longestStreak = currentStreak;
+      }
     } else {
-      longestStreak = Math.max(longestStreak, currentStreak);
-      currentStreak = 1;
+      currentStreak = 0;
     }
   }
-  longestStreak = Math.max(longestStreak, currentStreak);
-  return longestStreak;
-};
 
-// Function to get the completion rate for a single habit
-const getCompletionRateForHabit = async (habit: HabitType) => {
-  const habitInstances = await HabitInstance.find({
-    habitId: habit._id,
-  }).lean();
-  const completedInstances = habitInstances.filter(
-    (instance) => instance.completed
-  ).length;
+  const averageCompletionRate =
+    totalPossibleCompletions > 0
+      ? totalCompletions / totalPossibleCompletions
+      : 0;
 
-  // Calculate the total number of days the habit was supposed to be performed
-  const startDate = new Date(habit.createdAt).getTime();
-  const currentDate = new Date().getTime();
-  const daysSinceCreation = Math.floor(
-    (currentDate - startDate) / (1000 * 60 * 60 * 24)
+  await UserStats.findOneAndUpdate(
+    { userId: user._id },
+    {
+      totalHabits: habits.length,
+      longestStreak,
+      averageCompletionRate,
+      habitStats,
+    },
+    { upsert: true, new: true }
   );
-
-  const scheduledDays = habit.repeat.length * Math.ceil(daysSinceCreation / 7);
-
-  // Completion rate
-  const completionRate =
-    scheduledDays === 0 ? 0 : completedInstances / scheduledDays;
-  return completionRate;
 };
 
-// Function to get habit metrics (longest streak and completion rate) for all user habits
-const getHabitMetrics = async (clerkUserId: string) => {
+const getUserStats = async (clerkUserId: string) => {
   const user = await findUserByClerkId(clerkUserId);
-  const userId = user._id;
-  const habits = await findHabitsByUserId(userId);
-
-  const habitMetrics = await Promise.all(
-    habits.map(async (habit) => {
-      const longestStreak = await getLongestStreakForHabit(habit._id);
-      const completionRate = await getCompletionRateForHabit(habit);
-      const totalCompletions = await getTotalCompletionsForHabit(habit._id);
-
-      return {
-        habitId: habit._id,
-        habitName: habit.title,
-        longestStreak,
-        completionRate,
-        totalCompletions,
-      };
-    })
-  );
-
-  return JSON.parse(JSON.stringify(habitMetrics));
+  const stats = await UserStats.findOne({ userId: user._id });
+  return JSON.parse(JSON.stringify(stats));
 };
 
-// Export functions
-export { getLongestStreak, getHabitMetrics };
+export { updateUserStats, getUserStats };

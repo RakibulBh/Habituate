@@ -6,6 +6,8 @@ import { findHabitInstance } from "@/app/home/_actions";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
+//TODO: Replace grey box with emojis
+
 const Habit = ({
   title,
   frequency,

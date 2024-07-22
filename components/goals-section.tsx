@@ -1,6 +1,8 @@
 import React from "react";
 import GoalCard from "./goal-card";
 
+//TODO: makes this a todo section instead, show all user todo's
+
 const GoalsSection = () => {
   return (
     <>

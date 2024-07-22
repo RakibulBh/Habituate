@@ -54,6 +54,12 @@ const HabitSection = () => {
       <h1 className="font-light text-gray-500 text-2xl">Habits</h1>
       <div className="space-y-2 max-h-[26rem] overflow-y-auto">
         {isLoading && <Skeleton height="5rem" count={4} />}
+        {!isLoading && !error && filteredHabits.length === 0 && (
+          <p className="text-center text-gray-600">
+            No habits available for {currentView.toLowerCase()}. Start adding
+            habits to see them here.
+          </p>
+        )}
         {filteredHabits.map((habit: HabitType) => (
           <Habit
             key={habit._id}

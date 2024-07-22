@@ -37,6 +37,8 @@ import {
 } from "./ui/select";
 import { revalidatePath } from "next/cache";
 
+//TODO: Refactor the form so now limited colours are available and user chooses emoji for habit
+
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   color: z.string().min(7).max(7),

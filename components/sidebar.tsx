@@ -9,6 +9,7 @@ import {
   Bell,
   LogIn,
   Target,
+  Trophy,
 } from "lucide-react";
 import { SignOutButton, useUser } from "@clerk/nextjs"; // Assuming you have this import path correct for Clerk's useUser hook
 import Image from "next/image";
@@ -23,7 +24,7 @@ const navLinks = [
   { Icon: Calendar, title: "Daily Habits", path: "/habits" },
   { Icon: Target, title: "Goals", path: "/goals" },
   { Icon: BarChart2, title: "Statistics", path: "/statistics" },
-  { Icon: Cog, title: "Achievements", path: "/achievements" },
+  { Icon: Trophy, title: "Achievements", path: "/achievements" },
 ];
 
 function Divider() {

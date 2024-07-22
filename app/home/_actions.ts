@@ -4,6 +4,7 @@ import HabitInstance from "@/models/HabitInstancesSchema";
 import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
 import { revalidatePath } from "next/cache";
+import { updateUserStats } from "../statistics/actions";
 
 const findUserByClerkId = async (clerkUserID: string) => {
   const user = await User.findOne({ clerkUserID });
@@ -134,6 +135,7 @@ const createHabitInstance = async ({
         { value, completed: value >= goal }
       );
     }
+    await updateUserStats(clerkUserId);
   } catch (error) {
     console.error(`Error creating habit instance: ${error}`);
   }
@@ -172,6 +174,7 @@ const createHabit = async ({
       time,
     });
     await newHabit.save();
+    await updateUserStats(clerkUserID);
     revalidatePath("/dashboard");
   } catch (error) {
     console.error(`Error creating habit: ${error}`);
