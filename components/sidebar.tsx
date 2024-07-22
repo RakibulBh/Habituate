@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   BarChart2,
   House,
@@ -59,6 +59,8 @@ const Sidebar = () => {
   const { user } = useUser();
   const pathname = usePathname();
 
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
   return (
     <div className="w-[20rem] xl:w-[25rem] bg-gray-100 h-screen flex flex-col justify-between px-6 py-6">
       <div className="w-full space-y-4">
@@ -66,7 +68,9 @@ const Sidebar = () => {
           <UserProfileImage user={user} />
           <div>
             <h1 className="font-semibold text-xl">{user?.fullName}</h1>
-            <p className="text-gray-500 text-md">"Motivation is good!"</p>
+            <p className="text-gray-500 text-md">
+              &quot;Motivation is good!&quot;
+            </p>
           </div>
         </div>
         <div className="space-y-2">
@@ -93,7 +97,7 @@ const Sidebar = () => {
         </div>
         <Divider />
         <div className="w-full">
-          <AddHabitDialog />
+          <AddHabitDialog open={isDialogOpen} onOpenChange={setDialogOpen} />
         </div>
         <div className="w-full mx-auto">
           <MonthCalendar />

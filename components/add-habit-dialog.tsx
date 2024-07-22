@@ -47,7 +47,13 @@ const formSchema = z.object({
   time: z.string(),
 });
 
-const AddHabitDialog = () => {
+const AddHabitDialog = ({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) => {
   const { user } = useUser();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,6 +87,7 @@ const AddHabitDialog = () => {
       });
       form.reset();
       toast.success("Habit created successfully");
+      onOpenChange(false);
     } catch (error) {
       if (error instanceof MongooseError) {
         toast.error(error.message);
@@ -91,7 +98,7 @@ const AddHabitDialog = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="px-4 py-2 w-full bg-[#A855F7]">
           + Add New Habit
@@ -196,6 +203,11 @@ const AddHabitDialog = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectItem value="times">Times</SelectItem>
+                          <SelectItem value="pages">Pages</SelectItem>
+                          <SelectItem value="L">Litres</SelectItem>
+                          <SelectItem value="Ml">Millilitres</SelectItem>
+                          <SelectItem value="M">Meters</SelectItem>
+                          <SelectItem value="Km">Kilometres</SelectItem>
                           <SelectItem value="minutes">Minutes</SelectItem>
                           <SelectItem value="hours">Hours</SelectItem>
                         </SelectGroup>
