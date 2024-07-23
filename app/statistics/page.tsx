@@ -16,10 +16,8 @@ export default function Statistics() {
     enabled: !!user,
   });
 
-  console.log(stats);
-
   return (
-    <section className="mx-10 py-8 space-y-8 max-h-screen overflow-y-auto">
+    <section className="mx-10 py-8 space-y-8">
       <p className="text-2xl font-bold text-gray-800">Your Habit Insights</p>
       <div className="bg-white shadow-md rounded-xl px-6 py-4 flex flex-col space-y-4">
         <p className="text-2xl font-semibold text-gray-800">Overview</p>
@@ -72,7 +70,7 @@ export default function Statistics() {
           )}
         </div>
       </div>
-      <div className="bg-white shadow-md h-44 px-4 py-4 rounded-xl space-y-2">
+      <div className="bg-white shadow-md px-4 py-4 rounded-xl space-y-2 max-w-full">
         <p className="text-2xl font-semibold text-gray-800">
           Predictive Insights
         </p>
@@ -130,8 +128,8 @@ function HabitStatsRow({
 
 function PredictiveInsight() {
   return (
-    <div className="border-l-4 border-yellow-600 rounded-xl bg-yellow-100 space-y-2 pl-4 py-4 box-border">
-      <h1 className="text-gray-800">
+    <div className="border-l-4 border-yellow-600 rounded-xl bg-yellow-100 space-y-2 p-4">
+      <h1 className="text-gray-800 text-lg">
         Habit at Risk: <strong>Evening reading</strong>
       </h1>
       <p className="text-sm text-gray-600">

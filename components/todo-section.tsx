@@ -7,7 +7,7 @@ const TodoSection = () => {
   return (
     <>
       <h1 className="font-light text-gray-500 text-md md:text-2xl">
-        Today's todos
+        Today&apos;s todos
       </h1>
       <div className="space-y-2 max-h-40 overflow-y-auto">
         <TodoItem />
