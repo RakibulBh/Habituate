@@ -41,17 +41,19 @@ const HabitSection = () => {
   });
 
   const filterHabits = (habits: HabitType[]) => {
-    if (currentView === "All Day") return habits;
-    return habits.filter(
-      (habit) => getTimeCategory(habit.time) === currentView
-    );
+    return habits.filter((habit) => {
+      const isCorrectTimeCategory =
+        currentView === "All Day" ||
+        getTimeCategory(habit.time) === currentView;
+      return isCorrectTimeCategory;
+    });
   };
 
   const filteredHabits = habits ? filterHabits(habits) : [];
 
   return (
     <div className="space-y-2">
-      <h1 className="font-light text-gray-500 text-2xl">Habits</h1>
+      <h1 className="font-light text-gray-500 text-md md:text-2xl">Habits</h1>
       <div className="space-y-2 max-h-[26rem] overflow-y-auto">
         {isLoading && <Skeleton height="5rem" count={4} />}
         {!isLoading && !error && filteredHabits.length === 0 && (
@@ -65,6 +67,7 @@ const HabitSection = () => {
             key={habit._id}
             habitId={habit._id}
             title={habit.title}
+            emoji={habit.emoji}
             date={date.currentDate}
             frequency={habit.frequency}
             color={habit.color}

@@ -3,16 +3,16 @@ import { DayCarousel } from "@/components/day-carousel";
 import { useUser } from "@clerk/nextjs";
 import HabitSection from "@/components/habit-section";
 import CurrentView from "@/components/current-view";
-import GoalsSection from "@/components/goals-section";
+import TodoSection from "@/components/todo-section";
 
 function Dashboard() {
   return (
-    <section className="h-screen flex flex-col items-center">
+    <section className="max-h-screen overflow-y-auto flex flex-col items-center">
       <DayCarousel />
-      <div className="container px-20 xl:px-80 flex flex-col mt-10 gap-6">
+      <div className="container px-4 sm:px-10 lg:px-20 xl:px-32 flex flex-col mt-10 gap-6">
         <div className="space-y-6">
           <CurrentView />
-          <GoalsSection />
+          <TodoSection />
         </div>
         <HabitSection />
       </div>

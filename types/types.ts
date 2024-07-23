@@ -4,6 +4,7 @@ export type HabitType = {
   title: string;
   description: string;
   color: string;
+  emoji: string;
   repeat: string[];
   frequency: number;
   unit: string;

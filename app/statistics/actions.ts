@@ -4,9 +4,6 @@ import HabitInstance from "@/models/HabitInstancesSchema";
 import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
 import UserStats from "@/models/UserStatsSchema";
-
-//TODO: Fix habit completion rate so it coniders when habit was made until present
-//TODO: Habit title does not show on individual habit analysis
 //TODO: implement predictive insights
 
 const findUserByClerkId = async (clerkUserID: string) => {
@@ -51,16 +48,41 @@ const updateUserStats = async (clerkUserId: string) => {
       }
     }
 
-    const totalPossible =
-      habit.repeat.length *
-      Math.ceil(
-        (Date.now() - habit.createdAt.getTime()) / (7 * 24 * 60 * 60 * 1000)
-      );
+    // Calculate total possible completions since habit creation
+    const daysOfWeek = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ] as const;
+    type DayOfWeek = (typeof daysOfWeek)[number];
+
+    const habitDays = habit.repeat.map((day: string) =>
+      daysOfWeek.indexOf(day.toLowerCase() as DayOfWeek)
+    );
+    const creationDate = habit.createdAt;
+    const today = new Date();
+    let totalPossible = 0;
+
+    for (
+      let d = new Date(creationDate);
+      d <= today;
+      d.setDate(d.getDate() + 1)
+    ) {
+      if (habitDays.includes(d.getDay())) {
+        totalPossible++;
+      }
+    }
+
     const completionRate =
       totalPossible > 0 ? habitCompletions.length / totalPossible : 0;
 
     habitStats.push({
       habitId: habit._id,
+      habitTitle: habit.title,
       completions: habitCompletions.length,
       bestStreak,
       completionRate,
@@ -115,7 +137,7 @@ const updateUserStats = async (clerkUserId: string) => {
 
 const getUserStats = async (clerkUserId: string) => {
   const user = await findUserByClerkId(clerkUserId);
-  const stats = await UserStats.findOne({ userId: user._id });
+  const stats = await UserStats.findOne({ userId: user._id }).lean();
   return JSON.parse(JSON.stringify(stats));
 };
 

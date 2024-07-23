@@ -144,6 +144,7 @@ const createHabitInstance = async ({
 const createHabit = async ({
   clerkUserID,
   title,
+  emoji,
   color,
   description,
   repeat,
@@ -153,6 +154,7 @@ const createHabit = async ({
 }: {
   clerkUserID: string;
   title: string;
+  emoji: string;
   color: string;
   description: string;
   repeat: string[];
@@ -166,6 +168,7 @@ const createHabit = async ({
     const newHabit = new Habit({
       userId: user._id,
       title,
+      emoji,
       color,
       description,
       repeat,

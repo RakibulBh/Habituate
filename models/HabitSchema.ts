@@ -7,6 +7,7 @@ const habitSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true },
+    emoji: { type: String, required: true },
     description: { type: String, required: true },
     color: { type: String, required: true },
     repeat: { type: [String], required: true },

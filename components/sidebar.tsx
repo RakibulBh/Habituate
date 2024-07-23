@@ -63,13 +63,15 @@ const Sidebar = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <div className="w-[20rem] xl:w-[25rem] bg-gray-100 h-screen flex flex-col justify-between px-6 py-6">
+    <div className="w-full bg-gray-100 h-screen overflow-y-auto flex flex-col justify-between px-4 py-6 lg:w-64">
       <div className="w-full space-y-4">
         <div className="flex items-center gap-x-4">
-          <UserProfileImage user={user} />
+          <UserProfileImage width={60} height={60} user={user} />
           <div>
-            <h1 className="font-semibold text-xl">{user?.fullName}</h1>
-            <p className="text-gray-500 text-md">
+            <h1 className="font-semibold  text-md md:text-xl">
+              {user?.fullName}
+            </h1>
+            <p className="text-gray-500 text-sm md:text-md">
               &quot;Motivation is good!&quot;
             </p>
           </div>
@@ -100,9 +102,7 @@ const Sidebar = () => {
         <div className="w-full">
           <AddHabitDialog open={isDialogOpen} onOpenChange={setDialogOpen} />
         </div>
-        <div className="w-full mx-auto">
-          <MonthCalendar />
-        </div>
+        <div className="w-full mx-auto">{/* <MonthCalendar /> */}</div>
       </div>
       <div className="w-full space-y-4">
         <Divider />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Sidebar from "@/components/sidebar";
 import { MobileSidebar } from "@/components/mobile-sidebar";
+import MobileNavbar from "@/components/mobile-navbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -9,18 +10,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <main className="flex">
-      <div className="">
+    <main className="flex flex-col lg:flex-row">
+      <div className="hidden lg:block w-64">
         <Sidebar />
       </div>
-      {/* <div className="xl:hidden block">
-        <MobileSidebar />
-      </div> */}
-      <div className="flex-1">{children}</div>
+      <MobileNavbar />
+      <div className="flex-1 p-4">{children}</div>
     </main>
   );
 }

@@ -16,6 +16,8 @@ export default function Statistics() {
     enabled: !!user,
   });
 
+  console.log(stats);
+
   return (
     <section className="mx-10 py-8 space-y-8 max-h-screen overflow-y-auto">
       <p className="text-2xl font-bold text-gray-800">Your Habit Insights</p>
@@ -57,7 +59,7 @@ export default function Statistics() {
             stats.habitStats.map((habitStat: any) => (
               <HabitStatsRow
                 key={habitStat.habitId}
-                name={habitStat.habitId}
+                name={habitStat.habitTitle}
                 completionRate={(habitStat.completionRate * 100).toFixed(2)}
                 longestStreak={habitStat.bestStreak}
                 totalCompletions={habitStat.completions}

@@ -1,6 +1,14 @@
-import Image from "next/image"; // Make sure you're importing the Image component correctly
+import Image from "next/image";
 
-const UserProfileImage = ({ user }: { user: any }) => {
+const UserProfileImage = ({
+  user,
+  width,
+  height,
+}: {
+  user: any;
+  width: number;
+  height: number;
+}) => {
   // Define a fallback image URL
   const fallbackImageUrl = "/userPic.png"; // Replace with your fallback image path
 
@@ -10,11 +18,11 @@ const UserProfileImage = ({ user }: { user: any }) => {
   return (
     <Image
       className="rounded-full"
-      loader={({ src }) => src}
       src={imageUrl}
-      width={60}
-      height={60}
+      width={width}
+      height={height}
       alt="profile-url"
+      unoptimized
     />
   );
 };

@@ -1,9 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -35,16 +35,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { revalidatePath } from "next/cache";
+import EmojiPicker from "emoji-picker-react";
 
-//TODO: Refactor the form so now limited colours are available and user chooses emoji for habit
+const colorOptions = [
+  { value: "#FF5733", label: "Red" },
+  { value: "#33FF57", label: "Green" },
+  { value: "#3357FF", label: "Blue" },
+  { value: "#FFFF33", label: "Yellow" },
+  { value: "#FF33FF", label: "Purple" },
+];
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
-  color: z.string().min(7).max(7),
+  emoji: z.string().min(1).max(2),
+  color: z.string().length(7),
   description: z.string().min(5).max(100),
   repeat: z.array(z.string().min(1)),
-  frequency: z.preprocess((val) => Number(val), z.number()),
+  frequency: z.preprocess((val) => Number(val), z.number().min(1)),
   unit: z.string(),
   time: z.string(),
 });
@@ -57,14 +64,17 @@ const AddHabitDialog = ({
   onOpenChange: (open: boolean) => void;
 }) => {
   const { user } = useUser();
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      color: "#000000",
+      emoji: "😊",
+      color: "#FF5733",
       description: "",
       repeat: [],
-      frequency: 0,
+      frequency: 1,
       unit: "",
       time: "",
     },
@@ -102,29 +112,25 @@ const AddHabitDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button className="px-4 py-2 w-full bg-[#A855F7]">
+        <Button className="px-4 py-2 w-full bg-[#A855F7] hover:bg-[#9333EA]">
           + Add New Habit
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Habit</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Create Habit</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-            <div className="flex gap-x-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex gap-x-4">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex-1">
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input
-                        className="w-60"
-                        placeholder="Enter the title"
-                        {...field}
-                      />
+                      <Input placeholder="Enter the title" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,18 +138,71 @@ const AddHabitDialog = ({
               />
               <FormField
                 control={form.control}
-                name="color"
+                name="emoji"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Color</FormLabel>
+                    <FormLabel>Emoji</FormLabel>
                     <FormControl>
-                      <Input className="" type="color" {...field} />
+                      <div className="relative">
+                        <Button
+                          type="button"
+                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                          className="w-10 h-10 text-2xl"
+                        >
+                          {field.value}
+                        </Button>
+                        {showEmojiPicker && (
+                          <div className="absolute z-10 mt-1">
+                            <EmojiPicker
+                              onEmojiClick={(emojiObject) => {
+                                field.onChange(emojiObject.emoji);
+                                setShowEmojiPicker(false);
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="color"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Color</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectGroup>
+                        {colorOptions.map((color) => (
+                          <SelectItem key={color.value} value={color.value}>
+                            <div className="flex items-center">
+                              <div
+                                className="w-4 h-4 rounded-full mr-2"
+                                style={{ backgroundColor: color.value }}
+                              />
+                              {color.label}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="description"
@@ -178,7 +237,7 @@ const AddHabitDialog = ({
                 control={form.control}
                 name="frequency"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex-1">
                     <FormLabel>Frequency</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="Frequency" {...field} />
@@ -191,7 +250,7 @@ const AddHabitDialog = ({
                 control={form.control}
                 name="unit"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex-1">
                     <FormLabel>Unit</FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -233,7 +292,12 @@ const AddHabitDialog = ({
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button
+              type="submit"
+              className="w-full bg-[#A855F7] hover:bg-[#9333EA]"
+            >
+              Create Habit
+            </Button>
           </form>
         </Form>
       </DialogContent>

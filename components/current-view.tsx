@@ -18,7 +18,7 @@ const CurrentView = () => {
           key={index}
           onClick={() => setCurrentView(view)}
           className={cn(
-            "text-xl font-light hover:cursor-pointer relative pb-1",
+            "text-sm md:text-xl font-light hover:cursor-pointer relative pb-1",
             currentView === view && "relative"
           )}
         >

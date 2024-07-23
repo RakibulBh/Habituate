@@ -6,10 +6,9 @@ import { findHabitInstance } from "@/app/home/_actions";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
-//TODO: Replace grey box with emojis
-
 const Habit = ({
   title,
+  emoji,
   frequency,
   unit,
   date,
@@ -17,6 +16,7 @@ const Habit = ({
   color,
 }: {
   title: string;
+  emoji: string;
   frequency: number;
   unit: string;
   date: string;
@@ -46,7 +46,9 @@ const Habit = ({
           style={{ backgroundColor: color }}
           className="w-2 h-16 rounded-xl"
         />
-        <div className="h-16 w-16 bg-gray-300 rounded-md" />
+        <div className="h-16 w-16 bg-gray-200 rounded-md flex items-center justify-center text-4xl">
+          {emoji}
+        </div>
         <div className="space-y-[1px]">
           <h1>{title}</h1>
           <span className="flex items-center space-x-2">

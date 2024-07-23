@@ -30,13 +30,13 @@ export function DayCarousel() {
   const weeks = getWeeksAroundCurrentDate();
 
   return (
-    <Carousel className="px-10 mt-10 sm:w-[40rem] xl:w-[75rem]">
+    <Carousel
+      defaultValue={1}
+      className="mt-6 w-[20rem] sm:w-[30rem] md:w-[45rem]"
+    >
       <CarouselContent>
         {weeks.map((week, weekIndex) => (
-          <CarouselItem
-            key={weekIndex}
-            className="flex w-20 justify-between xl:justify-center xl:gap-x-6 xl:px-40"
-          >
+          <CarouselItem key={weekIndex} className="flex justify-center gap-x-2">
             {week.map((currDate, index) => (
               <CalendarDay
                 key={index}
@@ -51,6 +51,7 @@ export function DayCarousel() {
           </CarouselItem>
         ))}
       </CarouselContent>
+      {/* Uncomment these if you want navigation buttons */}
       {/* <CarouselPrevious />
       <CarouselNext /> */}
     </Carousel>
