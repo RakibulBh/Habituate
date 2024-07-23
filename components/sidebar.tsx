@@ -21,7 +21,7 @@ import UserProfileImage from "./image-with-fallback";
 
 const navLinks = [
   { Icon: House, title: "Home", path: "/home" },
-  { Icon: Calendar, title: "Daily Habits", path: "/habits" },
+  { Icon: Calendar, title: "My Habits", path: "/habits" },
   { Icon: Target, title: "Todos", path: "/todos" },
   { Icon: BarChart2, title: "Statistics", path: "/statistics" },
   { Icon: Trophy, title: "Achievements", path: "/achievements" },

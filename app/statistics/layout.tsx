@@ -19,7 +19,7 @@ export default function RootLayout({
         <Sidebar />
       </div>
       <MobileNavbar />
-      <div className="flex-1 p-4">{children}</div>
+      <div className="flex-1 p-4 bg-gray-100">{children}</div>
     </main>
   );
 }
