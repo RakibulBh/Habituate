@@ -11,7 +11,7 @@ import {
   Target,
   Trophy,
 } from "lucide-react";
-import { SignOutButton, useUser } from "@clerk/nextjs"; // Assuming you have this import path correct for Clerk's useUser hook
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import AddHabitDialog from "./add-habit-dialog";
 import { MonthCalendar } from "./calendar";
@@ -63,48 +63,50 @@ const Sidebar = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <div className="w-full bg-gray-100 h-screen overflow-y-auto flex flex-col justify-between px-4 py-6 lg:w-64">
-      <div className="w-full space-y-4">
-        <div className="flex items-center gap-x-4">
-          <UserProfileImage width={60} height={60} user={user} />
-          <div>
-            <h1 className="font-semibold  text-md md:text-xl">
-              {user?.fullName}
-            </h1>
-            <p className="text-gray-500 text-sm md:text-md">
-              &quot;Motivation is good!&quot;
-            </p>
+    <div className="w-full bg-gray-100 h-full flex flex-col overflow-hidden">
+      <div className="flex-grow overflow-y-auto px-4 py-6">
+        <div className="space-y-4">
+          <div className="flex items-center gap-x-4">
+            <UserProfileImage width={60} height={60} user={user} />
+            <div>
+              <h1 className="font-semibold text-md md:text-xl">
+                {user?.fullName}
+              </h1>
+              <p className="text-gray-500 text-sm md:text-md">
+                "Motivation is good!"
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="space-y-2">
-          <p className="text-md text-gray-400">Current level</p>
-          <div className="h-3 rounded-xl bg-[#D9D9D9]">
-            <div className="bg-[#A855F7] w-[30%] h-3 rounded-xl" />
+          <div className="space-y-2">
+            <p className="text-md text-gray-400">Current level</p>
+            <div className="h-3 rounded-xl bg-[#D9D9D9]">
+              <div className="bg-[#A855F7] w-[30%] h-3 rounded-xl" />
+            </div>
+            <div className="flex gap-x-2 items-center">
+              <Zap width={20} height={20} />
+              <p className="font-semibold text-sm">Level 5</p>
+            </div>
           </div>
-          <div className="flex gap-x-2 items-center">
-            <Zap width={20} height={20} />
-            <p className="font-semibold text-sm">Level 5</p>
+          <Divider />
+          <div className="flex flex-col space-y-2">
+            {navLinks.map((link, i) => (
+              <SidebarItem
+                key={i}
+                Icon={link.Icon}
+                title={link.title}
+                path={link.path}
+                isActive={pathname === link.path}
+              />
+            ))}
           </div>
+          <Divider />
+          <div className="w-full">
+            <AddHabitDialog open={isDialogOpen} onOpenChange={setDialogOpen} />
+          </div>
+          <div className="w-full mx-auto">{/* <MonthCalendar /> */}</div>
         </div>
-        <Divider />
-        <div className="flex flex-col space-y-2">
-          {navLinks.map((link, i) => (
-            <SidebarItem
-              key={i}
-              Icon={link.Icon}
-              title={link.title}
-              path={link.path}
-              isActive={pathname === link.path}
-            />
-          ))}
-        </div>
-        <Divider />
-        <div className="w-full">
-          <AddHabitDialog open={isDialogOpen} onOpenChange={setDialogOpen} />
-        </div>
-        <div className="w-full mx-auto">{/* <MonthCalendar /> */}</div>
       </div>
-      <div className="w-full space-y-4">
+      <div className="px-4 py-4 space-y-4">
         <Divider />
         <div className="flex justify-between items-center">
           <div className="flex gap-x-2">
