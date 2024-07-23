@@ -73,7 +73,7 @@ const Sidebar = () => {
                 {user?.fullName}
               </h1>
               <p className="text-gray-500 text-sm md:text-md">
-                "Motivation is good!"
+                &quot;Motivation is good!&quot;
               </p>
             </div>
           </div>
