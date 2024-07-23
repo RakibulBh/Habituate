@@ -102,7 +102,7 @@ function Todos() {
   return (
     <section className="mx-4 sm:mx-6 md:mx-10 py-4 sm:py-6 md:py-8 flex flex-col gap-y-4 sm:gap-y-6">
       <div className="space-y-2">
-        <h1 className="text-xl sm:text-2xl font-bold">My Todo's</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">My Todo&apos;s</h1>
         <p className="text-sm sm:text-base text-gray-400">
           Manage and track all your todos here.
         </p>
