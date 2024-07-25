@@ -6,6 +6,18 @@ import User from "@/models/UserSchema";
 import { revalidatePath } from "next/cache";
 import { updateUserStats } from "../statistics/actions";
 
+type HabitData = {
+  clerkUserID: string;
+  title: string;
+  emoji: string;
+  color: string;
+  description: string;
+  repeat: string[];
+  frequency: number;
+  unit: string;
+  time: string;
+};
+
 const findUserByClerkId = async (clerkUserID: string) => {
   const user = await User.findOne({ clerkUserID });
   if (!user) throw new Error("User not found");
@@ -151,20 +163,26 @@ const createHabit = async ({
   frequency,
   unit,
   time,
-}: {
-  clerkUserID: string;
-  title: string;
-  emoji: string;
-  color: string;
-  description: string;
-  repeat: string[];
-  frequency: number;
-  unit: string;
-  time: string;
-}) => {
+}: HabitData) => {
+  console.log("Server: Starting createHabit with data:", {
+    clerkUserID,
+    title,
+    emoji,
+    color,
+    description,
+    repeat,
+    frequency,
+    unit,
+    time,
+  });
   try {
     const user = await findUserByClerkId(clerkUserID);
+    if (!user) {
+      console.error("Server: User not found for clerkUserID:", clerkUserID);
+      throw new Error("User not found");
+    }
 
+    console.log("Server: User found, creating new habit");
     const newHabit = new Habit({
       userId: user._id,
       title,
@@ -176,11 +194,23 @@ const createHabit = async ({
       unit,
       time,
     });
+
+    console.log("Server: Saving new habit");
     await newHabit.save();
+    console.log("Server: Habit saved successfully");
+
+    console.log("Server: Updating user stats");
     await updateUserStats(clerkUserID);
+    console.log("Server: User stats updated");
+
+    console.log("Server: Revalidating path");
     revalidatePath("/dashboard");
+    console.log("Server: Path revalidated");
+
+    console.log("Server: Habit creation completed successfully");
   } catch (error) {
-    console.error(`Error creating habit: ${error}`);
+    console.error(`Server: Error creating habit:`, error);
+    throw error; // Re-throw the error to be handled by the client
   }
 };
 

@@ -26,7 +26,6 @@ import DaySelector from "./day-selector";
 import { createHabit } from "@/app/home/_actions";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
-import { MongooseError } from "mongoose";
 import {
   Select,
   SelectContent,
@@ -36,6 +35,19 @@ import {
   SelectValue,
 } from "./ui/select";
 import EmojiPicker from "emoji-picker-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+type HabitData = {
+  clerkUserID: string;
+  title: string;
+  emoji: string;
+  color: string;
+  description: string;
+  repeat: string[];
+  frequency: number;
+  unit: string;
+  time: string;
+};
 
 const colorOptions = [
   { value: "#FF5733", label: "Red" },
@@ -51,9 +63,9 @@ const formSchema = z.object({
   color: z.string().length(7),
   description: z.string().min(5).max(100),
   repeat: z.array(z.string().min(1)),
-  frequency: z.preprocess((val) => Number(val), z.number().min(1)),
-  unit: z.string(),
-  time: z.string(),
+  frequency: z.number().int().positive(),
+  unit: z.string().min(1),
+  time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
 });
 
 const AddHabitDialog = ({
@@ -65,6 +77,38 @@ const AddHabitDialog = ({
 }) => {
   const { user } = useUser();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const queryClient = useQueryClient();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { mutateAsync: createHabitMutation } = useMutation<
+    void,
+    Error,
+    HabitData
+  >({
+    mutationFn: async (params: HabitData) => {
+      setIsSubmitting(true);
+      try {
+        console.log("Creating habit with params:", params);
+        await createHabit(params);
+        console.log("Habit created successfully");
+      } catch (error) {
+        console.error("Error in createHabit mutation:", error);
+        throw error;
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    onSuccess: () => {
+      console.log("Mutation successful, invalidating queries");
+      queryClient.invalidateQueries({ queryKey: ["habits"] });
+      onOpenChange(false);
+      toast.success("Habit created successfully");
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+      toast.error(error.message || "An unexpected error occurred");
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,7 +117,7 @@ const AddHabitDialog = ({
       emoji: "😊",
       color: "#FF5733",
       description: "",
-      repeat: [],
+      repeat: [] as string[],
       frequency: 1,
       unit: "",
       time: "",
@@ -91,21 +135,19 @@ const AddHabitDialog = ({
   const selectedDays = form.watch("repeat");
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     try {
-      await createHabit({
+      console.log("Submitting form with values:", values);
+      await createHabitMutation({
         clerkUserID: user.id,
         ...values,
       });
+      console.log("Form submitted successfully");
       form.reset();
-      toast.success("Habit created successfully");
-      onOpenChange(false);
     } catch (error) {
-      if (error instanceof MongooseError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -152,13 +194,29 @@ const AddHabitDialog = ({
                           {field.value}
                         </Button>
                         {showEmojiPicker && (
-                          <div className="absolute z-10 mt-1">
-                            <EmojiPicker
-                              onEmojiClick={(emojiObject) => {
-                                field.onChange(emojiObject.emoji);
-                                setShowEmojiPicker(false);
-                              }}
-                            />
+                          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                            <div className="bg-white rounded-lg p-2">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-lg font-semibold">
+                                  Choose an emoji
+                                </span>
+                                <Button
+                                  type="button"
+                                  onClick={() => setShowEmojiPicker(false)}
+                                  className="text-sm"
+                                >
+                                  Close
+                                </Button>
+                              </div>
+                              <EmojiPicker
+                                onEmojiClick={(emojiObject) => {
+                                  field.onChange(emojiObject.emoji);
+                                  setShowEmojiPicker(false);
+                                }}
+                                width={300}
+                                height={400}
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
@@ -295,8 +353,9 @@ const AddHabitDialog = ({
             <Button
               type="submit"
               className="w-full bg-[#A855F7] hover:bg-[#9333EA]"
+              disabled={isSubmitting}
             >
-              Create Habit
+              {isSubmitting ? "Creating..." : "Create Habit"}
             </Button>
           </form>
         </Form>

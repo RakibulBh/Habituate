@@ -6,6 +6,7 @@ import { getTodos } from "@/app/todos/actions";
 import { useUser } from "@clerk/nextjs";
 import { useDateStore } from "@/store/date";
 import { Badge } from "./ui/badge";
+import Skeleton from "react-loading-skeleton";
 
 //TODO: makes this a todo section instead, show all user todo's
 
@@ -61,8 +62,12 @@ const TodoSection = () => {
         Today&apos;s todos
       </h1>
       <div className="space-y-2 max-h-40 overflow-y-auto">
-        {isLoading && <p>Loading todos...</p>}
-        {error && <p>Error loading todos: {(error as Error).message}</p>}
+        {!isLoading && !error && todos && todos.length === 0 && (
+          <p className="text-center text-gray-600">
+            No todos available for today.
+          </p>
+        )}
+        {isLoading && <Skeleton height="5rem" count={2} />}
         {!isLoading &&
           !error &&
           todos &&
