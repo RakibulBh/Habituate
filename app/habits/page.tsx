@@ -31,12 +31,11 @@ function Habits() {
       clerkUserId: string;
     }) => deleteHabit({ habitId, clerkUserId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["habits"] });
+      queryClient.invalidateQueries({ queryKey: ["habits", user?.id] });
       toast.success("Habit deleted successfully");
     },
     onError: (error) => {
       console.error("Delete mutation error:", error);
-      toast.error("Failed to delete habit");
     },
   });
 
@@ -97,7 +96,7 @@ function HabitItem({
 }) {
   return (
     <div
-      className="w-full h-48 p-4 bg-white rounded-xl shadow-lg flex flex-col justify-between transition-all duration-300 hover:shadow-xl"
+      className="w-full h-48 p-4 bg-white rounded-l-sm rounded-r-md shadow-lg flex flex-col justify-between transition-all duration-300 hover:shadow-xl"
       style={{ borderLeft: `6px solid ${habit.color}` }}
     >
       <div>

@@ -69,9 +69,7 @@ const Sidebar = () => {
           <div className="flex items-center gap-x-4">
             <UserProfileImage width={60} height={60} user={user} />
             <div>
-              <h1 className="font-semibold text-md md:text-xl">
-                {user?.fullName}
-              </h1>
+              <h1 className="font-semibold text-md">{user?.fullName}</h1>
               <p className="text-gray-500 text-sm md:text-md">
                 &quot;Motivation is good!&quot;
               </p>
@@ -118,10 +116,12 @@ const Sidebar = () => {
           </div>
         </div>
         <div className="flex justify-between">
-          <div className="flex gap-x-2">
-            <Cog />
-            <p>Settings</p>
-          </div>
+          <Link href="/settings">
+            <div className="flex gap-x-2">
+              <Cog />
+              Settings
+            </div>
+          </Link>
           <div className="flex gap-x-2">
             <LogIn />
             {user && <SignOutButton />}

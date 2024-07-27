@@ -29,7 +29,7 @@ const HabitSection = () => {
     error,
     isLoading,
   } = useQuery({
-    queryKey: ["habits", user?.id, date.currentDay],
+    queryKey: ["habits", user?.id],
     queryFn: () =>
       user
         ? getUserHabitsByDay({
@@ -45,7 +45,17 @@ const HabitSection = () => {
       const isCorrectTimeCategory =
         currentView === "All Day" ||
         getTimeCategory(habit.time) === currentView;
-      return isCorrectTimeCategory;
+      const habitCreationDate = new Date(habit.createdAt);
+      const currentDate = new Date(date.currentDate).setHours(0, 0, 0, 0);
+      const habitCreationDateMidnight = new Date(habitCreationDate).setHours(
+        0,
+        0,
+        0,
+        0
+      );
+      const isCreatedOnOrBeforeCurrentDate =
+        habitCreationDateMidnight <= currentDate;
+      return isCorrectTimeCategory && isCreatedOnOrBeforeCurrentDate;
     });
   };
 
@@ -66,6 +76,7 @@ const HabitSection = () => {
           <Habit
             key={habit._id}
             habitId={habit._id}
+            description={habit.description}
             title={habit.title}
             emoji={habit.emoji}
             date={date.currentDate}

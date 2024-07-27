@@ -2,6 +2,7 @@
 import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
 import { revalidatePath } from "next/cache";
+import { updateUserStats } from "../statistics/actions";
 
 const findUserByClerkId = async (clerkUserID: string) => {
   const user = await User.findOne({ clerkUserID });
@@ -32,13 +33,7 @@ export const deleteHabit = async ({
       _id: habitId,
       userId: user._id,
     });
-    if (!deletedHabit) {
-      throw new Error(
-        "Habit not found or you don't have permission to delete it"
-      );
-    }
-    revalidatePath("/dashboard"); // Adjust this path if needed
-    return { success: true };
+    updateUserStats(clerkUserId);
   } catch (e) {
     console.error(e);
     throw e;

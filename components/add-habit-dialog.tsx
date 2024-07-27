@@ -1,8 +1,3 @@
-"use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import React, { useState } from "react";
 import {
   Dialog,
@@ -36,6 +31,9 @@ import {
 } from "./ui/select";
 import EmojiPicker from "emoji-picker-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 type HabitData = {
   clerkUserID: string;
@@ -64,7 +62,7 @@ const formSchema = z.object({
   description: z.string().min(5).max(100),
   repeat: z.array(z.string().min(1)),
   frequency: z.number().int().positive(),
-  unit: z.string().min(1),
+  unit: z.string(),
   time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
 });
 
@@ -143,6 +141,7 @@ const AddHabitDialog = ({
       await createHabitMutation({
         clerkUserID: user.id,
         ...values,
+        frequency: Number(values.frequency), // Ensure frequency is a number
       });
       console.log("Form submitted successfully");
       form.reset();
@@ -298,7 +297,12 @@ const AddHabitDialog = ({
                   <FormItem className="flex-1">
                     <FormLabel>Frequency</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Frequency" {...field} />
+                      <Input
+                        type="number"
+                        placeholder="Frequency"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))} // Convert to number
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

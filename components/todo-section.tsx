@@ -2,7 +2,7 @@
 import React from "react";
 import TodoItem from "./todo-item";
 import { useQuery } from "@tanstack/react-query";
-import { getTodos } from "@/app/todos/actions";
+import { getTodos, getTodosByDate } from "@/app/todos/actions";
 import { useUser } from "@clerk/nextjs";
 import { useDateStore } from "@/store/date";
 import { Badge } from "./ui/badge";
@@ -52,7 +52,11 @@ const TodoSection = () => {
     isLoading,
   } = useQuery({
     queryKey: ["todos", user?.id, date.currentDate],
-    queryFn: () => getTodos({ clerkUserId: user!.id }),
+    queryFn: () =>
+      getTodosByDate({
+        clerkUserId: user!.id,
+        date: new Date(date.currentDate).toISOString(),
+      }),
     enabled: !!user,
   });
 

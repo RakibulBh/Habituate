@@ -36,16 +36,35 @@ export const getTodos = async ({ clerkUserId }: { clerkUserId: string }) => {
   }
 };
 
-export const getTodosByDay = async ({
+export const getTodosByDate = async ({
   clerkUserId,
   date,
 }: {
   clerkUserId: string;
-  date: Date;
+  date: string;
 }) => {
   try {
     const user = await findUserByClerkId(clerkUserId);
-    const todos = await Todo.find({ userId: user._id, due: date });
+    console.log("Date received:", date);
+
+    // Create the date range for the given day in local time
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    console.log("Querying for todos between:", startOfDay, "and", endOfDay);
+
+    const todos = await Todo.find({
+      userId: user._id,
+      due: {
+        $gte: startOfDay,
+        $lt: endOfDay,
+      },
+    });
+
+    console.log("Todos found:", todos.length);
+
     return JSON.parse(JSON.stringify(todos));
   } catch (error) {
     console.error("Failed to get todos:", error);
@@ -63,11 +82,15 @@ export const addTodo = async (formData: FormData) => {
 
     const user = await findUserByClerkId(clerkUserID);
 
+    // Parse the dueDate and set it to the start of the day in local time
+    const parsedDueDate = new Date(dueDate);
+    parsedDueDate.setHours(0, 0, 0, 0);
+
     const newTodo = new Todo({
       userId: user._id,
       title,
       description,
-      due: new Date(dueDate),
+      due: parsedDueDate,
       priority,
     });
 

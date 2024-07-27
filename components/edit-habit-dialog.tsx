@@ -49,6 +49,7 @@ const EditHabitDialog = ({
   value,
   unit,
   open,
+  description,
   onOpenChange,
 }: {
   title: string;
@@ -58,6 +59,7 @@ const EditHabitDialog = ({
   completed: boolean;
   value: number;
   unit: string;
+  description: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) => {
@@ -112,7 +114,7 @@ const EditHabitDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>Habit desc</DialogDescription>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

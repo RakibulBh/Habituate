@@ -31,7 +31,7 @@ export function DayCarousel() {
 
   return (
     <Carousel
-      defaultValue={1}
+      defaultValue={2}
       className="mt-6 w-[20rem] sm:w-[30rem] md:w-[45rem]"
     >
       <CarouselContent>

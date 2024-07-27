@@ -11,6 +11,7 @@ const Habit = ({
   emoji,
   frequency,
   unit,
+  description,
   date,
   habitId,
   color,
@@ -19,6 +20,7 @@ const Habit = ({
   emoji: string;
   frequency: number;
   unit: string;
+  description: string;
   date: string;
   habitId: string;
   color: string;
@@ -63,6 +65,7 @@ const Habit = ({
         title={title}
         date={date}
         habitId={habitId}
+        description={description}
         completed={habitInstance ? habitInstance.value >= frequency : false}
         value={habitInstance ? habitInstance.value : 0}
         goal={frequency}
