@@ -10,6 +10,7 @@ const userStatsSchema = new Schema(
     totalHabits: { type: Number, default: 0 },
     longestStreak: { type: Number, default: 0 },
     averageCompletionRate: { type: Number, default: 0 },
+    totalXP: { type: Number, default: 0 },
     habitStats: [
       {
         habitId: { type: Schema.Types.ObjectId, ref: "Habit" },

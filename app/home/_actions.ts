@@ -195,19 +195,8 @@ const createHabit = async ({
       time,
     });
 
-    console.log("Server: Saving new habit");
     await newHabit.save();
-    console.log("Server: Habit saved successfully");
-
-    console.log("Server: Updating user stats");
     await updateUserStats(clerkUserID);
-    console.log("Server: User stats updated");
-
-    console.log("Server: Revalidating path");
-    revalidatePath("/dashboard");
-    console.log("Server: Path revalidated");
-
-    console.log("Server: Habit creation completed successfully");
   } catch (error) {
     console.error(`Server: Error creating habit:`, error);
     throw error; // Re-throw the error to be handled by the client

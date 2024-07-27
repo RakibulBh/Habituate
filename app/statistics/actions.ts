@@ -1,7 +1,9 @@
 "use server";
 
+import { calculateXP } from "@/lib/utils";
 import HabitInstance from "@/models/HabitInstancesSchema";
 import Habit from "@/models/HabitSchema";
+import UserLevel from "@/models/userLevelSchema";
 import User from "@/models/UserSchema";
 import UserStats from "@/models/UserStatsSchema";
 //TODO: implement predictive insights
@@ -16,6 +18,8 @@ const updateUserStats = async (clerkUserId: string) => {
   const user = await findUserByClerkId(clerkUserId);
   const habits = await Habit.find({ userId: user._id });
   const allHabitInstances = await HabitInstance.find({ userId: user._id });
+
+  let totalXP = 0;
 
   let totalCompletions = 0;
   let totalPossibleCompletions = 0;
@@ -36,6 +40,9 @@ const updateUserStats = async (clerkUserId: string) => {
 
     let bestStreak = 0;
     let currentHabitStreak = 0;
+
+    const xpForHabit = calculateXP(habit, bestStreak);
+    totalXP += xpForHabit * habitCompletions.length;
 
     for (let i = 0; i < habitInstancesForHabit.length; i++) {
       if (habitInstancesForHabit[i].completed) {
@@ -86,6 +93,7 @@ const updateUserStats = async (clerkUserId: string) => {
       completions: habitCompletions.length,
       bestStreak,
       completionRate,
+      xpEarned: xpForHabit * habitCompletions.length,
     });
 
     totalCompletions += habitCompletions.length;
@@ -123,16 +131,37 @@ const updateUserStats = async (clerkUserId: string) => {
       ? totalCompletions / totalPossibleCompletions
       : 0;
 
-  await UserStats.findOneAndUpdate(
+  const updatedStats = await UserStats.findOneAndUpdate(
     { userId: user._id },
     {
       totalHabits: habits.length,
       longestStreak,
       averageCompletionRate,
       habitStats,
+      totalXP,
     },
     { upsert: true, new: true }
   );
+
+  let userLevel = await UserLevel.findOne({ userId: user._id });
+  if (!userLevel) {
+    userLevel = new UserLevel({ userId: user._id });
+  }
+
+  userLevel.currentXP += totalXP - (updatedStats.totalXP || 0);
+  while (userLevel.currentXP >= userLevel.xpToNextLevel) {
+    userLevel.currentXP -= userLevel.xpToNextLevel;
+    userLevel.level += 1;
+    userLevel.xpToNextLevel = Math.floor(userLevel.xpToNextLevel * 1.2); // Increase XP required for next level
+  }
+
+  await userLevel.save();
+};
+
+export const getUserLevel = async (clerkUserId: string) => {
+  const user = await findUserByClerkId(clerkUserId);
+  const userLevel = await UserLevel.findOne({ userId: user._id }).lean();
+  return JSON.parse(JSON.stringify(userLevel));
 };
 
 const getUserStats = async (clerkUserId: string) => {

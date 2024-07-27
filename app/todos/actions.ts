@@ -45,16 +45,11 @@ export const getTodosByDate = async ({
 }) => {
   try {
     const user = await findUserByClerkId(clerkUserId);
-    console.log("Date received:", date);
-
     // Create the date range for the given day in local time
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
-
-    console.log("Querying for todos between:", startOfDay, "and", endOfDay);
-
     const todos = await Todo.find({
       userId: user._id,
       due: {
@@ -62,9 +57,6 @@ export const getTodosByDate = async ({
         $lt: endOfDay,
       },
     });
-
-    console.log("Todos found:", todos.length);
-
     return JSON.parse(JSON.stringify(todos));
   } catch (error) {
     console.error("Failed to get todos:", error);

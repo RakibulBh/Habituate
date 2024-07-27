@@ -18,6 +18,13 @@ import { MonthCalendar } from "./calendar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import UserProfileImage from "./image-with-fallback";
+import { useQuery } from "@tanstack/react-query";
+import { getUserLevel } from "@/app/statistics/actions";
+interface UserLevel {
+  level: number;
+  currentXP: number;
+  xpToNextLevel: number;
+}
 
 const navLinks = [
   { Icon: House, title: "Home", path: "/home" },
@@ -62,6 +69,23 @@ const Sidebar = () => {
 
   const [isDialogOpen, setDialogOpen] = useState(false);
 
+  const {
+    data: levelData,
+    error: levelError,
+    isLoading: levelLoading,
+  } = useQuery<UserLevel, Error>({
+    queryKey: ["userLevel", user?.id],
+    queryFn: () => getUserLevel(user!.id),
+    enabled: !!user,
+  });
+
+  let progressPercentage;
+  if (levelData) {
+    progressPercentage = (levelData.currentXP / levelData.xpToNextLevel) * 100;
+  } else {
+    progressPercentage = 50;
+  }
+
   return (
     <div className="w-full bg-gray-100 h-full flex flex-col overflow-hidden">
       <div className="flex-grow overflow-y-auto px-4 py-6">
@@ -78,11 +102,16 @@ const Sidebar = () => {
           <div className="space-y-2">
             <p className="text-md text-gray-400">Current level</p>
             <div className="h-3 rounded-xl bg-[#D9D9D9]">
-              <div className="bg-[#A855F7] w-[30%] h-3 rounded-xl" />
+              <div
+                style={{ width: `${progressPercentage}%` }}
+                className="bg-[#A855F7] w-[30%] h-3 rounded-xl"
+              />
             </div>
             <div className="flex gap-x-2 items-center">
               <Zap width={20} height={20} />
-              <p className="font-semibold text-sm">Level 5</p>
+              <p className="font-semibold text-sm">
+                Level {levelLoading ? "0" : levelData?.level}
+              </p>
             </div>
           </div>
           <Divider />
