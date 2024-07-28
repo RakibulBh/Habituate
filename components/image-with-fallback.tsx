@@ -17,7 +17,7 @@ const UserProfileImage = ({
 
   return (
     <Image
-      className="rounded-full border-2 border-purple-500"
+      className="rounded-full border-2 border-teal-400"
       src={imageUrl}
       width={width}
       height={height}

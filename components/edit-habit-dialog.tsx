@@ -90,6 +90,16 @@ const EditHabitDialog = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
 
+    // Optimistic update
+    queryClient.setQueryData(
+      ["habitInstance", user.id, habitId, date],
+      (oldData: any) => ({
+        ...oldData,
+        value: values.currValue,
+        completed: values.currValue >= goal,
+      })
+    );
+
     try {
       await updateHabitProgress({
         clerkUserId: user.id,
@@ -98,8 +108,11 @@ const EditHabitDialog = ({
         date,
         goal,
       });
-      // The statistics will be updated automatically in the createHabitInstance function
     } catch (error) {
+      // Revert optimistic update on error
+      queryClient.invalidateQueries({
+        queryKey: ["habitInstance", user.id, habitId, date],
+      });
       console.error(`Error creating habit instance: ${error}`);
     }
   };

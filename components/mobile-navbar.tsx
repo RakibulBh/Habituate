@@ -73,7 +73,7 @@ function LevelComponent({
           <div className="relative w-20 h-2 rounded-full bg-gray-200">
             <div
               style={{ width: `${progressPercentage}%` }}
-              className="absolute top-0 left-0 h-2 rounded-full bg-purple-500 w-[30%]"
+              className="absolute top-0 left-0 h-2 rounded-full bg-teal-500 w-[30%]"
             />{" "}
           </div>
           <div className="flex items-center gap-x-1">

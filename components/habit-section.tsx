@@ -29,7 +29,7 @@ const HabitSection = () => {
     error,
     isLoading,
   } = useQuery({
-    queryKey: ["habits", user?.id],
+    queryKey: ["habits", user?.id, date.currentDate, date.currentDay],
     queryFn: () =>
       user
         ? getUserHabitsByDay({

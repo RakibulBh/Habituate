@@ -25,10 +25,10 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
   return (
     <div
       className={cn(
-        "text-center items-center flex flex-col justify-center text-[#6366F1] w-10 h-12 sm:w-16 sm:h-20 rounded-md md:rounded-xl hover:cursor-pointer",
+        "text-center items-center flex flex-col justify-center w-10 h-12 sm:w-16 sm:h-20 rounded-md md:rounded-xl hover:cursor-pointer",
         isCurrentDay
-          ? "border-2 border-[#6366F1] bg-[#dbdcfc] text-[#6366F1]"
-          : "bg-[#F8F8F8]"
+          ? "border-2 border-teal-600 bg-teal-400 text-white"
+          : "bg-[#F8F8F8] text-teal-600"
       )}
       onClick={handleClick}
     >

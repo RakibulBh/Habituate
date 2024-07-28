@@ -4,10 +4,10 @@ const daysOfWeek = [
   { name: "Monday", shortName: "M" },
   { name: "Tuesday", shortName: "T" },
   { name: "Wednesday", shortName: "W" },
-  { name: "Thursday", shortName: "Th" },
+  { name: "Thursday", shortName: "T" },
   { name: "Friday", shortName: "F" },
   { name: "Saturday", shortName: "S" },
-  { name: "Sunday", shortName: "Su" },
+  { name: "Sunday", shortName: "S" },
 ];
 
 type DaySelectorProps = {
@@ -19,22 +19,23 @@ const DaySelector: React.FC<DaySelectorProps> = ({
   selectedDays,
   toggleDay,
 }) => {
-  const isDaySelected = (day: string) => selectedDays.includes(day);
-
   return (
-    <div className="flex space-x-2">
+    <div className="flex justify-between">
       {daysOfWeek.map((day) => (
-        <div
+        <button
           key={day.name}
-          className={`w-10 h-10 flex items-center justify-center rounded-full cursor-pointer ${
-            isDaySelected(day.name)
-              ? "bg-primary text-white"
-              : "bg-gray-200 text-gray-600"
-          }`}
+          className={`
+            w-8 h-8 text-sm font-medium rounded-full transition-all duration-200 ease-in-out
+            ${
+              selectedDays.includes(day.name)
+                ? "bg-teal-500 text-white shadow-md transform scale-110"
+                : "bg-gray-100 text-gray-600 hover:bg-teal-100"
+            }
+          `}
           onClick={() => toggleDay(day.name)}
         >
           {day.shortName}
-        </div>
+        </button>
       ))}
     </div>
   );

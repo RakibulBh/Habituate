@@ -197,6 +197,7 @@ const createHabit = async ({
 
     await newHabit.save();
     await updateUserStats(clerkUserID);
+    revalidatePath("/home");
   } catch (error) {
     console.error(`Server: Error creating habit:`, error);
     throw error; // Re-throw the error to be handled by the client

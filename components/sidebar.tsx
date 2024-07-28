@@ -20,6 +20,7 @@ import { usePathname } from "next/navigation";
 import UserProfileImage from "./image-with-fallback";
 import { useQuery } from "@tanstack/react-query";
 import { getUserLevel } from "@/app/statistics/actions";
+
 interface UserLevel {
   level: number;
   currentXP: number;
@@ -53,8 +54,8 @@ function SidebarItem({
     <Link href={path}>
       <div
         className={`flex items-center gap-x-4 cursor-pointer p-2 rounded-md transition-colors duration-200 ${
-          isActive ? "bg-purple-200 text-purple-600" : "text-gray-800"
-        } hover:bg-purple-100 hover:text-purple-600`}
+          isActive ? "bg-teal-200 text-teal-600" : "text-gray-800"
+        } hover:bg-teal-100 hover:text-teal-600`}
       >
         <Icon />
         <p className="text-md font-semibold">{title}</p>
@@ -104,7 +105,7 @@ const Sidebar = () => {
             <div className="h-3 rounded-xl bg-[#D9D9D9]">
               <div
                 style={{ width: `${progressPercentage}%` }}
-                className="bg-[#A855F7] w-[30%] h-3 rounded-xl"
+                className="bg-teal-400 w-[30%] h-3 rounded-xl"
               />
             </div>
             <div className="flex gap-x-2 items-center">

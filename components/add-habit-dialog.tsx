@@ -58,16 +58,25 @@ type AddHabitDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 const colorOptions = [
-  { value: "#FF5733", label: "Red" },
-  { value: "#33FF57", label: "Green" },
-  { value: "#3357FF", label: "Blue" },
-  { value: "#FFFF33", label: "Yellow" },
-  { value: "#FF33FF", label: "Purple" },
+  { value: "#4A90E2", label: "Sky Blue" },
+  { value: "#50C878", label: "Emerald Green" },
+  { value: "#F08080", label: "Coral" },
+  { value: "#9370DB", label: "Medium Purple" },
+  { value: "#20B2AA", label: "Light Sea Green" },
+  { value: "#F4A460", label: "Sandy Brown" },
+  { value: "#778899", label: "Light Slate Gray" },
+  { value: "#14B8A6", label: "Teal" },
+  { value: "#0D9488", label: "Dark Teal" },
+  { value: "#0891B2", label: "Cyan" },
+  { value: "#0369A1", label: "Blue" },
+  { value: "#059669", label: "Emerald" },
+  { value: "#65A30D", label: "Lime" },
+  { value: "#CA8A04", label: "Yellow" },
 ];
 
 const formSchema = z.object({
   title: z.string().min(2).max(30),
-  emoji: z.string().min(1).max(2),
+  emoji: z.string().min(1), // Increase max length to accommodate complex emojis
   color: z.string().length(7),
   description: z.string().min(5).max(50),
   repeat: z.array(z.string().min(1)),
@@ -163,7 +172,7 @@ const AddHabitDialog: React.FC<AddHabitDialogProps> = ({
       )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
+          <DialogTitle className="text-2xl font-bold text-teal-700">
             {isEditing ? "Edit Habit" : "Create Habit"}
           </DialogTitle>
         </DialogHeader>
@@ -178,9 +187,13 @@ const AddHabitDialog: React.FC<AddHabitDialogProps> = ({
                 name="title"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel className="text-teal-700">Title</FormLabel>{" "}
                     <FormControl>
-                      <Input placeholder="Enter the title" {...field} />
+                      <Input
+                        placeholder="Enter the title"
+                        className="border-teal-200 focus:border-teal-500 focus:ring-teal-500"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -398,7 +411,7 @@ const AddHabitDialog: React.FC<AddHabitDialogProps> = ({
               </Button>
               <Button
                 type="submit"
-                className="bg-[#A855F7] hover:bg-[#9333EA]"
+                className="bg-teal-500 hover:bg-teal-600 text-white"
                 disabled={isSubmitting}
               >
                 {isSubmitting

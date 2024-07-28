@@ -38,7 +38,7 @@ const Habit = ({
             date,
           })
         : Promise.resolve(null),
-    enabled: !!user,
+    enabled: !!user && isDialogOpen,
   });
 
   return (
