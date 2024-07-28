@@ -53,7 +53,7 @@ export default function Statistics() {
   const error = statsError || levelError;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-10 h-full overflow-y-auto">
       <UserLevelCard user={user} levelData={levelData} isLoading={isLoading} />
       <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
         <h2 className="text-3xl font-bold text-gray-800">Habit Insights</h2>
