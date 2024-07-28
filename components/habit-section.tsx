@@ -41,22 +41,30 @@ const HabitSection = () => {
   });
 
   const filterHabits = (habits: HabitType[]) => {
-    return habits.filter((habit) => {
-      const isCorrectTimeCategory =
-        currentView === "All Day" ||
-        getTimeCategory(habit.time) === currentView;
-      const habitCreationDate = new Date(habit.createdAt);
-      const currentDate = new Date(date.currentDate).setHours(0, 0, 0, 0);
-      const habitCreationDateMidnight = new Date(habitCreationDate).setHours(
-        0,
-        0,
-        0,
-        0
-      );
-      const isCreatedOnOrBeforeCurrentDate =
-        habitCreationDateMidnight <= currentDate;
-      return isCorrectTimeCategory && isCreatedOnOrBeforeCurrentDate;
-    });
+    // Helper function to convert time to a number representing minutes since midnight
+    const timeToMinutes = (time: string) => {
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours * 60 + minutes;
+    };
+
+    return habits
+      .filter((habit) => {
+        const isCorrectTimeCategory =
+          currentView === "All Day" ||
+          getTimeCategory(habit.time) === currentView;
+        const habitCreationDate = new Date(habit.createdAt);
+        const currentDate = new Date(date.currentDate).setHours(0, 0, 0, 0);
+        const habitCreationDateMidnight = new Date(habitCreationDate).setHours(
+          0,
+          0,
+          0,
+          0
+        );
+        const isCreatedOnOrBeforeCurrentDate =
+          habitCreationDateMidnight <= currentDate;
+        return isCorrectTimeCategory && isCreatedOnOrBeforeCurrentDate;
+      })
+      .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
   };
 
   const filteredHabits = habits ? filterHabits(habits) : [];

@@ -128,7 +128,14 @@ const Sidebar = () => {
           </div>
           <Divider />
           <div className="w-full">
-            <AddHabitDialog open={isDialogOpen} onOpenChange={setDialogOpen} />
+            <AddHabitDialog
+              onCancel={() => setDialogOpen(false)}
+              open={isDialogOpen}
+              onSubmit={(data) => {
+                setDialogOpen(false);
+              }}
+              onOpenChange={setDialogOpen}
+            />
           </div>
           <div className="w-full mx-auto">{/* <MonthCalendar /> */}</div>
         </div>

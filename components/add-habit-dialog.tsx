@@ -34,6 +34,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { updateHabit } from "@/app/habits/actions";
+import { HabitType } from "@/types/types";
 
 type HabitData = {
   clerkUserID: string;
@@ -47,6 +49,14 @@ type HabitData = {
   time: string;
 };
 
+type AddHabitDialogProps = {
+  initialData?: HabitType;
+  onSubmit: (data: HabitData) => void; // Remove the optional '?'
+  onCancel: () => void;
+  isEditing?: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 const colorOptions = [
   { value: "#FF5733", label: "Red" },
   { value: "#33FF57", label: "Green" },
@@ -56,113 +66,112 @@ const colorOptions = [
 ];
 
 const formSchema = z.object({
-  title: z.string().min(2).max(50),
+  title: z.string().min(2).max(30),
   emoji: z.string().min(1).max(2),
   color: z.string().length(7),
-  description: z.string().min(5).max(100),
+  description: z.string().min(5).max(50),
   repeat: z.array(z.string().min(1)),
   frequency: z.number().int().positive(),
   unit: z.string(),
   time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
 });
 
-const AddHabitDialog = ({
+const AddHabitDialog: React.FC<AddHabitDialogProps> = ({
+  initialData,
+  onSubmit,
+  onCancel,
+  isEditing = false,
   open,
   onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
 }) => {
   const { user } = useUser();
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const { mutateAsync: createHabitMutation } = useMutation<
-    void,
-    Error,
-    HabitData
-  >({
-    mutationFn: async (params: HabitData) => {
-      setIsSubmitting(true);
-      try {
-        console.log("Creating habit with params:", params);
-        await createHabit(params);
-        console.log("Habit created successfully");
-      } catch (error) {
-        console.error("Error in createHabit mutation:", error);
-        throw error;
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    onSuccess: () => {
-      console.log("Mutation successful, invalidating queries");
-      queryClient.invalidateQueries({ queryKey: ["habits"] });
-      onOpenChange(false);
-      toast.success("Habit created successfully");
-    },
-    onError: (error) => {
-      console.error("Mutation error:", error);
-      toast.error(error.message || "An unexpected error occurred");
-    },
-  });
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       title: "",
       emoji: "😊",
       color: "#FF5733",
       description: "",
-      repeat: [] as string[],
+      repeat: [],
       frequency: 1,
       unit: "",
       time: "",
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: (data: z.infer<typeof formSchema>) =>
+      isEditing
+        ? updateHabit({
+            habitId: initialData!._id,
+            clerkUserId: user!.id,
+            updatedData: data,
+          })
+        : createHabit({ ...data, clerkUserID: user!.id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["habits", user!.id] });
+      toast.success(
+        isEditing ? "Habit updated successfully" : "Habit created successfully"
+      );
+      if (onSubmit) {
+        onSubmit(form.getValues() as HabitData);
+      }
+      onOpenChange(false);
+    },
+
+    onError: (error) => {
+      console.error("Mutation error:", error);
+      toast.error(
+        isEditing ? "Failed to update habit" : "Failed to create habit"
+      );
+    },
+  });
+
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    try {
+      await mutation.mutateAsync(values);
+    } catch (error) {
+      console.error("Submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const toggleDay = (day: string) => {
-    const currentFrequency = form.getValues("repeat");
-    const updatedFrequency = currentFrequency.includes(day)
-      ? currentFrequency.filter((d) => d !== day)
-      : [...currentFrequency, day];
-    form.setValue("repeat", updatedFrequency);
+    const currentRepeat = form.getValues("repeat");
+    const updatedRepeat = currentRepeat.includes(day)
+      ? currentRepeat.filter((d) => d !== day)
+      : [...currentRepeat, day];
+    form.setValue("repeat", updatedRepeat);
   };
 
   const selectedDays = form.watch("repeat");
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user) {
-      return;
-    }
-    try {
-      console.log("Submitting form with values:", values);
-      await createHabitMutation({
-        clerkUserID: user.id,
-        ...values,
-        frequency: Number(values.frequency), // Ensure frequency is a number
-      });
-      console.log("Form submitted successfully");
-      form.reset();
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="px-4 py-2 w-full bg-[#A855F7] hover:bg-[#9333EA]">
-          + Add New Habit
-        </Button>
-      </DialogTrigger>
+      {!isEditing && (
+        <DialogTrigger asChild>
+          <Button className="px-4 py-2 w-full bg-[#A855F7] hover:bg-[#9333EA]">
+            + Add New Habit
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Create Habit</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">
+            {isEditing ? "Edit Habit" : "Create Habit"}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <div className="flex gap-x-4">
               <FormField
                 control={form.control}
@@ -328,11 +337,40 @@ const AddHabitDialog = ({
                           <SelectItem value="times">Times</SelectItem>
                           <SelectItem value="pages">Pages</SelectItem>
                           <SelectItem value="L">Litres</SelectItem>
-                          <SelectItem value="Ml">Millilitres</SelectItem>
+                          <SelectItem value="mL">Millilitres</SelectItem>
                           <SelectItem value="M">Meters</SelectItem>
                           <SelectItem value="Km">Kilometres</SelectItem>
                           <SelectItem value="minutes">Minutes</SelectItem>
                           <SelectItem value="hours">Hours</SelectItem>
+                          <SelectItem value="steps">Steps</SelectItem>
+                          <SelectItem value="calories">Calories</SelectItem>
+                          <SelectItem value="reps">Repetitions</SelectItem>
+                          <SelectItem value="sets">Sets</SelectItem>
+                          <SelectItem value="words">Words</SelectItem>
+                          <SelectItem value="chapters">Chapters</SelectItem>
+                          <SelectItem value="g">Grams</SelectItem>
+                          <SelectItem value="kg">Kilograms</SelectItem>
+                          <SelectItem value="oz">Ounces</SelectItem>
+                          <SelectItem value="lb">Pounds</SelectItem>
+                          <SelectItem value="glasses">Glasses</SelectItem>
+                          <SelectItem value="servings">Servings</SelectItem>
+                          <SelectItem value="sessions">Sessions</SelectItem>
+                          <SelectItem value="tasks">Tasks</SelectItem>
+                          <SelectItem value="percent">Percent</SelectItem>
+                          <SelectItem value="dollars">Dollars</SelectItem>
+                          <SelectItem value="euros">Euros</SelectItem>
+                          <SelectItem value="miles">Miles</SelectItem>
+                          <SelectItem value="cm">Centimeters</SelectItem>
+                          <SelectItem value="songs">Songs</SelectItem>
+                          <SelectItem value="episodes">Episodes</SelectItem>
+                          <SelectItem value="pushups">Push-ups</SelectItem>
+                          <SelectItem value="situps">Sit-ups</SelectItem>
+                          <SelectItem value="squats">Squats</SelectItem>
+                          <SelectItem value="laps">Laps</SelectItem>
+                          <SelectItem value="breaths">Breaths</SelectItem>
+                          <SelectItem value="poses">Poses</SelectItem>
+                          <SelectItem value="problems">Problems</SelectItem>
+                          <SelectItem value="questions">Questions</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -354,13 +392,24 @@ const AddHabitDialog = ({
                 </FormItem>
               )}
             />
-            <Button
-              type="submit"
-              className="w-full bg-[#A855F7] hover:bg-[#9333EA]"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Creating..." : "Create Habit"}
-            </Button>
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-[#A855F7] hover:bg-[#9333EA]"
+                disabled={isSubmitting}
+              >
+                {isSubmitting
+                  ? isEditing
+                    ? "Updating..."
+                    : "Creating..."
+                  : isEditing
+                  ? "Update Habit"
+                  : "Create Habit"}
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>

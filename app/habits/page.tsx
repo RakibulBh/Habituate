@@ -1,16 +1,25 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle, Search, SquarePen, Trash } from "lucide-react";
-import React from "react";
+import { Search } from "lucide-react";
+import React, { useState } from "react";
 import { deleteHabit, findHabitsByUserId } from "./actions";
 import { useUser } from "@clerk/nextjs";
 import { HabitType } from "@/types/types";
 import toast from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
+import { HabitItem } from "@/components/habits/habit-full-item";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import AddHabitDialog from "@/components/add-habit-dialog";
 
 function Habits() {
   const { user, isLoaded } = useUser();
   const queryClient = useQueryClient();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const {
     data: habits,
@@ -80,63 +89,11 @@ function Habits() {
               key={habit._id}
               habit={habit}
               onDelete={() => handleDeleteHabit(habit._id)}
+              clerkUserId={user!.id}
             />
           ))}
       </div>
     </section>
-  );
-}
-
-function HabitItem({
-  habit,
-  onDelete,
-}: {
-  habit: HabitType;
-  onDelete: () => void;
-}) {
-  return (
-    <div
-      className="w-full h-48 p-4 bg-white rounded-l-sm rounded-r-md shadow-lg flex flex-col justify-between transition-all duration-300 hover:shadow-xl"
-      style={{ borderLeft: `6px solid ${habit.color}` }}
-    >
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center">
-            <span className="text-2xl mr-2">{habit.emoji}</span>
-            <h3 className="text-lg font-semibold truncate">{habit.title}</h3>
-          </div>
-          <div className="flex gap-x-2 text-gray-400">
-            <SquarePen className="w-5 h-5 cursor-pointer hover:text-gray-600 transition-colors" />
-            <Trash
-              className="w-5 h-5 cursor-pointer hover:text-red-500 transition-colors"
-              onClick={onDelete}
-            />
-          </div>
-        </div>
-        <p className="text-gray-600 text-sm truncate">{habit.description}</p>
-      </div>
-
-      <div className="mt-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-500">Progress</span>
-          <span className="text-sm font-medium text-gray-700">50%</span>
-        </div>
-        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-500 ease-out"
-            style={{ width: "50%", backgroundColor: habit.color }}
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center mt-4">
-        <div className="flex items-center">
-          <span className="text-sm font-medium text-gray-500 mr-2">
-            🔥 2 day streak
-          </span>
-        </div>
-      </div>
-    </div>
   );
 }
 
