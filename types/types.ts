@@ -14,11 +14,27 @@ export type HabitType = {
   __v: number;
 };
 
-export type HabitInstance = {
+// types.ts
+export interface HabitInstanceType {
+  _id: string;
   userId: string;
   habitId: string;
-  date: string;
   value: number;
   goal: number;
+  date: string;
   completed: boolean;
-};
+}
+
+export interface HabitInstanceUpdateParams {
+  clerkUserId: string;
+  habitId: string;
+  value: number;
+  date: string;
+  goal: number;
+}
+
+export interface HabitInstanceFindParams {
+  clerkUserId: string;
+  habitId: string;
+  date: string;
+}

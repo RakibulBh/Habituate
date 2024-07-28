@@ -5,6 +5,11 @@ import Habit from "@/models/HabitSchema";
 import User from "@/models/UserSchema";
 import { revalidatePath } from "next/cache";
 import { updateUserStats } from "../statistics/actions";
+import {
+  HabitInstanceFindParams,
+  HabitInstanceType,
+  HabitInstanceUpdateParams,
+} from "@/types/types";
 
 type HabitData = {
   clerkUserID: string;
@@ -91,19 +96,18 @@ const findHabitInstance = async ({
   clerkUserId,
   habitId,
   date,
-}: {
-  clerkUserId: string;
-  habitId: string;
-  date: string;
-}) => {
+}: HabitInstanceFindParams): Promise<HabitInstanceType | null> => {
   try {
-    const user = await findUserByClerkId(clerkUserId);
+    const user = await User.findOne({ clerkUserID: clerkUserId });
+    if (!user) throw new Error("User not found");
+
     const habitInstance = await HabitInstance.findOne({
       userId: user._id,
       habitId,
       date,
     });
-    return JSON.parse(JSON.stringify(habitInstance)) || null;
+
+    return habitInstance ? JSON.parse(JSON.stringify(habitInstance)) : null;
   } catch (e) {
     console.error(`Error finding habit instance: ${e}`);
     return null;
@@ -201,6 +205,47 @@ const createHabit = async ({
   } catch (error) {
     console.error(`Server: Error creating habit:`, error);
     throw error; // Re-throw the error to be handled by the client
+  }
+};
+
+export const updateHabitInstance = async ({
+  clerkUserId,
+  habitId,
+  value,
+  date,
+  goal,
+}: HabitInstanceUpdateParams): Promise<HabitInstanceType> => {
+  try {
+    const user = await User.findOne({ clerkUserID: clerkUserId });
+    if (!user) throw new Error("User not found");
+
+    let habitInstance = await HabitInstance.findOne({
+      userId: user._id,
+      habitId,
+      date,
+    });
+
+    if (!habitInstance) {
+      habitInstance = new HabitInstance({
+        userId: user._id,
+        habitId,
+        value,
+        goal,
+        date,
+        completed: value >= goal,
+      });
+    } else {
+      habitInstance.value = value;
+      habitInstance.completed = value >= goal;
+    }
+
+    await habitInstance.save();
+    await updateUserStats(clerkUserId);
+
+    return JSON.parse(JSON.stringify(habitInstance));
+  } catch (error) {
+    console.error(`Error updating habit instance: ${error}`);
+    throw error;
   }
 };
 

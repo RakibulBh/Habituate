@@ -41,7 +41,6 @@ const HabitSection = () => {
   });
 
   const filterHabits = (habits: HabitType[]) => {
-    // Helper function to convert time to a number representing minutes since midnight
     const timeToMinutes = (time: string) => {
       const [hours, minutes] = time.split(":").map(Number);
       return hours * 60 + minutes;

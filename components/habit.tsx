@@ -1,21 +1,12 @@
-"use client";
-
 import React, { useState } from "react";
-import EditHabitDialog from "./edit-habit-dialog";
-import { findHabitInstance } from "@/app/home/_actions";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "@tanstack/react-query";
+import { findHabitInstance, updateHabitInstance } from "@/app/home/_actions";
+import EditHabitDialog from "./edit-habit-dialog";
+import { HabitInstanceType } from "@/types/types";
+import { Button } from "./ui/button";
 
-const Habit = ({
-  title,
-  emoji,
-  frequency,
-  unit,
-  description,
-  date,
-  habitId,
-  color,
-}: {
+interface HabitProps {
   title: string;
   emoji: string;
   frequency: number;
@@ -24,22 +15,75 @@ const Habit = ({
   date: string;
   habitId: string;
   color: string;
+}
+
+const Habit: React.FC<HabitProps> = ({
+  title,
+  emoji,
+  frequency,
+  unit,
+  description,
+  date,
+  habitId,
+  color,
 }) => {
   const { user } = useUser();
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const { data: habitInstance, isLoading } = useQuery({
-    queryKey: ["habitInstance", user?.id, habitId, date],
-    queryFn: () =>
-      user
-        ? findHabitInstance({
-            clerkUserId: user.id,
-            habitId,
-            date,
-          })
-        : Promise.resolve(null),
-    enabled: !!user && isDialogOpen,
+  const { data: habitInstance, isLoading } = useQuery<HabitInstanceType | null>(
+    {
+      queryKey: ["habitInstance", user?.id, habitId, date],
+      queryFn: () =>
+        findHabitInstance({ clerkUserId: user?.id!, habitId, date }),
+      enabled: !!user,
+    }
+  );
+
+  const updateMutation = useMutation({
+    mutationFn: updateHabitInstance,
+    onMutate: async (newHabit) => {
+      await queryClient.cancelQueries({
+        queryKey: ["habitInstance", user?.id, habitId, date],
+      });
+      const previousHabit = queryClient.getQueryData<HabitInstanceType>([
+        "habitInstance",
+        user?.id,
+        habitId,
+        date,
+      ]);
+      queryClient.setQueryData<HabitInstanceType>(
+        ["habitInstance", user?.id, habitId, date],
+        (old) => ({ ...old, ...newHabit } as HabitInstanceType)
+      );
+      return { previousHabit };
+    },
+    onError: (err, newHabit, context) => {
+      queryClient.setQueryData(
+        ["habitInstance", user?.id, habitId, date],
+        context?.previousHabit
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["habitInstance", user?.id, habitId, date],
+      });
+    },
   });
+
+  const handleEditClick = () => {
+    setDialogOpen(true);
+  };
+
+  const handleUpdate = (newValue: number) => {
+    updateMutation.mutate({
+      clerkUserId: user?.id!,
+      habitId,
+      value: newValue,
+      date,
+      goal: frequency,
+    });
+  };
 
   return (
     <div className="bg-[#F8F8F8] rounded-md px-5 py-3 flex items-center justify-between">
@@ -61,10 +105,9 @@ const Habit = ({
           </span>
         </div>
       </div>
+      <Button onClick={handleEditClick}>Edit</Button>
       <EditHabitDialog
         title={title}
-        date={date}
-        habitId={habitId}
         description={description}
         completed={habitInstance ? habitInstance.value >= frequency : false}
         value={habitInstance ? habitInstance.value : 0}
@@ -72,6 +115,7 @@ const Habit = ({
         unit={unit}
         open={isDialogOpen}
         onOpenChange={setDialogOpen}
+        onUpdate={handleUpdate}
       />
     </div>
   );
