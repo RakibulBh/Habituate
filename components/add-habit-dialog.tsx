@@ -80,7 +80,7 @@ const formSchema = z.object({
   color: z.string().length(7),
   description: z.string().min(5).max(50),
   repeat: z.array(z.string().min(1)),
-  frequency: z.number().int().positive(),
+  frequency: z.coerce.number(),
   unit: z.string(),
   time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
 });
