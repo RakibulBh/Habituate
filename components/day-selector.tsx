@@ -24,6 +24,7 @@ const DaySelector: React.FC<DaySelectorProps> = ({
       {daysOfWeek.map((day) => (
         <button
           key={day.name}
+          type="button" // Add this line to prevent form submission
           className={`
             w-8 h-8 text-sm font-medium rounded-full transition-all duration-200 ease-in-out
             ${
