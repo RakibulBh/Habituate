@@ -152,7 +152,7 @@ const updateUserStats = async (clerkUserId: string) => {
   while (userLevel.currentXP >= userLevel.xpToNextLevel) {
     userLevel.currentXP -= userLevel.xpToNextLevel;
     userLevel.level += 1;
-    userLevel.xpToNextLevel = Math.floor(userLevel.xpToNextLevel * 1.2); // Increase XP required for next level
+    userLevel.xpToNextLevel = Math.floor(userLevel.xpToNextLevel * 1.2);
   }
 
   await userLevel.save();

@@ -170,7 +170,7 @@ const AddHabitDialog: React.FC<AddHabitDialogProps> = ({
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-teal-700">
             {isEditing ? "Edit Habit" : "Create Habit"}
@@ -179,7 +179,7 @@ const AddHabitDialog: React.FC<AddHabitDialogProps> = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
+            className="space-y-6"
           >
             <div className="flex gap-x-4">
               <FormField
