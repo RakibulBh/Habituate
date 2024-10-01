@@ -55,7 +55,7 @@ function Habits() {
   };
 
   return (
-    <section className="p-4 md:p-10 bg-white h-full overflow-y-auto">
+    <section className="p-4 md:p-10 bg-[#292A47] h-full overflow-y-auto">
       <h1 className="text-2xl font-bold mb-4">All Habits</h1>
       <p className="text-gray-600 mb-8">Manage and track your daily habits</p>
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">

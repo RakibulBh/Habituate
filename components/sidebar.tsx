@@ -20,12 +20,18 @@ import { usePathname } from "next/navigation";
 import UserProfileImage from "./image-with-fallback";
 import { useQuery } from "@tanstack/react-query";
 import { getUserLevel } from "@/app/statistics/actions";
+import { RectRadius } from "recharts/types/shape/Rectangle";
 
 interface UserLevel {
   level: number;
   currentXP: number;
   xpToNextLevel: number;
 }
+
+type NavLink = {
+  Icon: React.FC;
+  title: string;
+};
 
 const navLinks = [
   { Icon: House, title: "Home", path: "/home" },
@@ -47,6 +53,15 @@ const UserLevel = () => {
       <div className="h-1 bg-[#363757] rounded-xl">
         <div className="bg-[#35CC4E] w-[20%] h-full rounded-xl" />
       </div>
+    </div>
+  );
+};
+
+const SidebarItem = ({ name, Icon }: { name: string; Icon: React.FC }) => {
+  return (
+    <div className="text-white px-4 py-2 rounded-md hover:bg-[#161729] flex gap-4">
+      <Icon />
+      <p className="font-md text-semibold">{name}</p>
     </div>
   );
 };
@@ -92,6 +107,11 @@ const Sidebar = () => {
           </div>
         </div>
         <UserLevel />
+      </div>
+      <div className="px-4 py-4 space-y-2">
+        {navLinks.map((link: NavLink) => (
+          <SidebarItem name={link.title} Icon={link.Icon} />
+        ))}
       </div>
     </div>
   );

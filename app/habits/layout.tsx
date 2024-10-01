@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <div className="h-screen flex flex-col lg:flex-row">
-      <div className="hidden lg:block w-64">
+      <div className="hidden lg:block w-72">
         <Sidebar />
       </div>
       <MobileNavbar />
