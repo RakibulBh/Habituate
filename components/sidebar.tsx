@@ -35,34 +35,21 @@ const navLinks = [
   { Icon: Trophy, title: "Achievements", path: "/achievements" },
 ];
 
-function Divider() {
-  return <div className="h-[2px] rounded-xl bg-[#DBDBDB]" />;
-}
+const src = "/userPic.png";
 
-function SidebarItem({
-  Icon,
-  title,
-  path,
-  isActive,
-}: {
-  Icon: React.FC;
-  title: string;
-  path: string;
-  isActive: boolean;
-}) {
+const UserLevel = () => {
   return (
-    <Link href={path}>
-      <div
-        className={`flex items-center gap-x-4 cursor-pointer p-2 rounded-md transition-colors duration-200 ${
-          isActive ? "bg-teal-200 text-teal-600" : "text-gray-800"
-        } hover:bg-teal-100 hover:text-teal-600`}
-      >
-        <Icon />
-        <p className="text-md font-semibold">{title}</p>
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between">
+        <p className="text-gray-400 text-sm">580/800 XP</p>
+        <p className="text-gray-400 text-sm">Level 8</p>
       </div>
-    </Link>
+      <div className="h-1 bg-[#363757] rounded-xl">
+        <div className="bg-[#35CC4E] w-[20%] h-full rounded-xl" />
+      </div>
+    </div>
   );
-}
+};
 
 const Sidebar = () => {
   const { user } = useUser();
@@ -88,82 +75,23 @@ const Sidebar = () => {
   }
 
   return (
-    <div className="w-full bg-gray-100 h-full flex flex-col overflow-hidden">
-      <div className="flex-grow overflow-y-auto px-4 py-6">
-        <div className="space-y-4">
-          <div className="flex items-center gap-x-4">
-            <UserProfileImage width={60} height={60} user={user} />
-            <div>
-              <h1 className="font-semibold text-md">{user?.fullName}</h1>
-              <p className="text-gray-500 text-sm md:text-md">
-                &quot;Motivation is good!&quot;
-              </p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <p className="text-md text-gray-400">Current level</p>
-            <div className="h-3 rounded-xl bg-[#D9D9D9]">
-              <div
-                style={{ width: `${progressPercentage}%` }}
-                className="bg-teal-400 w-[30%] h-3 rounded-xl"
-              />
-            </div>
-            <div className="flex gap-x-2 items-center">
-              <Zap width={20} height={20} />
-              <p className="font-semibold text-sm">
-                Level {levelLoading ? "0" : levelData?.level}
-              </p>
-            </div>
-          </div>
-          <Divider />
-          <div className="flex flex-col space-y-2">
-            {navLinks.map((link, i) => (
-              <SidebarItem
-                key={i}
-                Icon={link.Icon}
-                title={link.title}
-                path={link.path}
-                isActive={pathname === link.path}
-              />
-            ))}
-          </div>
-          <Divider />
-          <div className="w-full">
-            <AddHabitDialog
-              onCancel={() => setDialogOpen(false)}
-              open={isDialogOpen}
-              onSubmit={(data) => {
-                setDialogOpen(false);
-              }}
-              onOpenChange={setDialogOpen}
-            />
-          </div>
-          <div className="w-full mx-auto">{/* <MonthCalendar /> */}</div>
-        </div>
-      </div>
-      <div className="px-4 py-4 space-y-4">
-        <Divider />
-        <div className="flex justify-between items-center">
-          <div className="flex gap-x-2">
-            <Bell />
-            <p>Notifications</p>
-          </div>
-          <div className="text-white rounded-full bg-red-500 p-1 w-7 h-7 flex items-center justify-center">
-            3
+    <div className="w-full bg-[#1D1D33] h-full flex flex-col overflow-hidden pt-10">
+      <div className="flex flex-col space-y-2 border-b-[1px] border-[#363757] px-4 pb-6">
+        <div className="py-6 flex flex-col items-center justify-center h-40 gap-4">
+          <Image
+            className="border-4 border-white rounded-md"
+            loader={() => src}
+            src={user ? user.imageUrl : src}
+            alt="user-profile-img"
+            width={80}
+            height={80}
+          />
+          <div className="text-center">
+            <h1 className="font-bold text-white text-md">User Surname</h1>
+            <p className="text-sm text-gray-400">Programmer</p>
           </div>
         </div>
-        <div className="flex justify-between">
-          <Link href="/settings">
-            <div className="flex gap-x-2">
-              <Cog />
-              Settings
-            </div>
-          </Link>
-          <div className="flex gap-x-2">
-            <LogIn />
-            {user && <SignOutButton />}
-          </div>
-        </div>
+        <UserLevel />
       </div>
     </div>
   );
