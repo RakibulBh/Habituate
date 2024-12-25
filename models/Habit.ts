@@ -17,7 +17,7 @@ const HabitSchema = new mongoose.Schema({
     required: true,
   },
   days: {
-    type: String,
+    type: [String],
     required: true,
   },
   end: {

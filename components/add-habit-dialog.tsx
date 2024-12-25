@@ -15,26 +15,36 @@ import { Label } from "./ui/label";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
+interface FormDataType {
+  name: string;
+  frequency: string;
+  duration: string;
+  days: string[];
+}
+
 const SelectOption = ({
+  type,
+  formData,
+  setFormData,
+  formValue,
   value,
-  setValue,
-  currValue,
-  setDays,
 }: {
+  type: "frequency" | "duration";
+  formData: FormDataType;
+  formValue: string;
+  setFormData: Dispatch<SetStateAction<FormDataType>>;
   value: Duration | FrequencyType;
-  currValue: Duration | FrequencyType;
-  setDays: Dispatch<SetStateAction<string[]>>;
-  setValue: Dispatch<SetStateAction<any>>;
 }) => {
   return (
     <div
       onClick={() => {
-        setValue(value);
-        setDays([]);
+        type === "frequency"
+          ? setFormData({ ...formData, frequency: value, days: [] })
+          : setFormData({ ...formData, duration: value });
       }}
       className={cn(
         "rounded-xl py-2 px-4 border hover:cursor-pointer",
-        currValue === value
+        formValue === value
           ? "bg-primary text-white border-transparent"
           : "bg-white border-primary text-primary"
       )}
@@ -46,18 +56,21 @@ const SelectOption = ({
 
 const DaySelector = ({
   value,
-  days,
-  setDays,
+  setFormData,
+  formData,
 }: {
   value: string;
-  days: string[];
-  setDays: Dispatch<SetStateAction<string[]>>;
+  setFormData: Dispatch<SetStateAction<FormDataType>>;
+  formData: FormDataType;
 }) => {
   const onClick = () => {
-    if (days.includes(value)) {
-      setDays(days.filter((val) => val !== value));
+    if (formData.days.includes(value)) {
+      setFormData({
+        ...formData,
+        days: formData.days.filter((val) => val !== value),
+      });
     } else {
-      setDays([...days, value]);
+      setFormData({ ...formData, days: [...formData.days, value] });
     }
   };
 
@@ -66,7 +79,7 @@ const DaySelector = ({
       onClick={onClick}
       className={cn(
         "p-2 rounded-md hover:cursor-pointer flex items-center justify-center",
-        days.includes(value)
+        formData.days.includes(value)
           ? "bg-primary text-white border-transparent"
           : "bg-white border-primary text-primary"
       )}
@@ -77,9 +90,12 @@ const DaySelector = ({
 };
 
 const AddHabitDialog = () => {
-  const [duration, setDuration] = useState<Duration>("15 days");
-  const [frequency, setFrequency] = useState<FrequencyType>("Weekly");
-  const [days, setDays] = useState<string[]>(["M", "W"]);
+  const [formData, setFormData] = useState({
+    name: "",
+    frequency: "Weekly",
+    duration: "15 days",
+    days: ["M", "W"],
+  });
 
   function onSubmit() {
     // Do something with the form values.
@@ -101,17 +117,24 @@ const AddHabitDialog = () => {
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input name="name" />
+            <Input
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              value={formData.name}
+              name="name"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="name">Duration</Label>
             <div className="flex gap-2">
               {DURATIONS.map((_duration, i) => (
                 <SelectOption
+                  type="duration"
                   key={i}
-                  setDays={setDays}
-                  setValue={setDuration}
-                  currValue={duration}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formValue={formData.duration}
                   value={_duration}
                 />
               ))}
@@ -122,11 +145,12 @@ const AddHabitDialog = () => {
             <div className="flex gap-2">
               {FREQUENCY.map((_frequency, i) => (
                 <SelectOption
+                  type="frequency"
                   key={i}
-                  setValue={setFrequency}
-                  currValue={frequency}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formValue={formData.frequency}
                   value={_frequency}
-                  setDays={setDays}
                 />
               ))}
             </div>
@@ -134,22 +158,22 @@ const AddHabitDialog = () => {
           <div className="space-y-2">
             <Label htmlFor="name">Days</Label>
             <div className="w-full grid grid-cols-7 gap-2">
-              {frequency === "Weekly" &&
+              {formData.frequency === "Weekly" &&
                 WEEKDAYS.map((weekday, index) => (
                   <DaySelector
                     key={index}
                     value={weekday}
-                    days={days}
-                    setDays={setDays}
+                    formData={formData}
+                    setFormData={setFormData}
                   />
                 ))}
-              {frequency === "Monthly" &&
+              {formData.frequency === "Monthly" &&
                 DAYS.map((day, index) => (
                   <DaySelector
                     key={index}
                     value={String(day)}
-                    days={days}
-                    setDays={setDays}
+                    formData={formData}
+                    setFormData={setFormData}
                   />
                 ))}
             </div>
@@ -164,9 +188,3 @@ const AddHabitDialog = () => {
 };
 
 export default AddHabitDialog;
-
-// Hi!
-
-// Just wanted to let you know I got the offer from SquaredUp, however I am now in a position where I have other interviews coming up from big companies such as EA Sports but I am really stuck on my decision, I prioritise learning in any job, so I just wanted an opinion from you weather I should stick with SquaredUp or risk it and perhaps try the other interviews? SquaredUp is great but a lot of people have told me it is much better to have a big named company on your CV as it helps with getting a lot more interviews for grad role etc..What do you think of this?
-
-// Thanks so much!
