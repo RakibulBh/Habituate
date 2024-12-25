@@ -19,9 +19,9 @@ export default async function Home() {
   return (
     <main className="bg-[#F8F8F8] h-screen flex">
       <Sidebar />
-      <section className="h-full flex flex-col flex-1">
+      <section className="flex-1 flex flex-col">
         <TopNav />
-        <div className="flex-1 bg-red-50 w-full"></div>
+        <HabitsContainer />
       </section>
     </main>
   );

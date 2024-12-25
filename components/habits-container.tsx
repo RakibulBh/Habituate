@@ -2,14 +2,14 @@
 import { getHabits } from "@/app/actions";
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
+import HabitComponent from "./HabitComponent";
 
 const HabitsContainer = () => {
   const { isLoaded, isSignedIn, user } = useUser();
-
   const [habits, setHabits] = useState([]);
 
   if (isLoaded && !isSignedIn) {
-    return null;
+    return;
   }
 
   useEffect(() => {
@@ -17,14 +17,18 @@ const HabitsContainer = () => {
       if (user?.id) {
         const fetchedHabits = await getHabits({ clerkUserId: user.id });
         setHabits(fetchedHabits);
+      } else {
+        setHabits([]);
       }
     };
     fetchHabits();
   }, [isLoaded, user]);
 
   return (
-    <div className="w-full h-full bg-white grid grid-cols-5">
-      {habits && habits.map((habit, index) => <p key={index}>{habit.name}</p>)}
+    <div className="flex-1 bg-primary">
+      {habits.map((habit, i) => (
+        <HabitComponent habit={habit} key={i} />
+      ))}
     </div>
   );
 };

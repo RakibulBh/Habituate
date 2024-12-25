@@ -19,7 +19,7 @@ const NavButton = ({
 
 const TopNav = () => {
   return (
-    <div className="border border-textGray flex justify-between h-14 bg-primary items-center px-4">
+    <div className="border border-textGray flex justify-between bg-primary items-center p-4">
       <h1 className="text-2xl text-white font-semibold">All habits</h1>
       <div className="flex gap-2">
         <NavButton>
