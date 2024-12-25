@@ -4,6 +4,10 @@ import mongoose, { model } from "mongoose";
 
 const HabitSchema = new mongoose.Schema<IHabit>(
   {
+    clerkUserId: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: [true, "Please provide a name for the habit"],

@@ -15,6 +15,7 @@ import { Label } from "./ui/label";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { createHabit } from "@/app/actions";
+import { useAuth } from "@clerk/nextjs";
 
 interface FormDataType {
   name: string;
@@ -91,6 +92,13 @@ const DaySelector = ({
 };
 
 const AddHabitDialog = () => {
+  const { isLoaded, userId, sessionId, getToken } = useAuth();
+
+  // In case the user signs out while on the page.
+  if (isLoaded && !userId) {
+    return null;
+  }
+
   const [formData, setFormData] = useState({
     name: "",
     frequency: "Weekly",
@@ -99,8 +107,11 @@ const AddHabitDialog = () => {
   });
 
   function onSubmit(e: FormEvent) {
+    if (!isLoaded || !userId || !sessionId) {
+      return;
+    }
     e.preventDefault();
-    createHabit(formData);
+    createHabit(formData, userId);
   }
 
   return (

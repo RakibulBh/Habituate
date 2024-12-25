@@ -6,6 +6,7 @@ export type NavlinkType = {
 };
 
 export interface IHabit {
+  clerkUserId: string;
   name: string;
   color?: string;
   frequency: "Daily" | "Weekly" | "Monthly";

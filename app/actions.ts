@@ -10,12 +10,19 @@ interface FormDataType {
   days: string[];
 }
 
-export const createHabit = async (formData: FormDataType) => {
+export const createHabit = async (
+  formData: FormDataType,
+  clerkUserId: string
+) => {
   await connectToMongoDB();
-
   try {
+    console.log("Clerk user id: ", clerkUserId);
     // Creating a new todo using Todo model
-    const newHabit = await Habit.create({ ...formData, end: new Date() });
+    const newHabit = await Habit.create({
+      ...formData,
+      end: new Date(),
+      clerkUserId,
+    });
     // Saving the new Habit
     newHabit.save();
     // Triggering revalidation of the specified path ("/")
@@ -24,6 +31,18 @@ export const createHabit = async (formData: FormDataType) => {
     return newHabit.toString();
   } catch (error) {
     console.log(error);
-    return { message: "error creating todo" };
+    return { message: "error creating Habit" };
+  }
+};
+
+export const getHabits = async ({ clerkUserId }: { clerkUserId: string }) => {
+  await connectToMongoDB();
+  try {
+    const habits = await Habit.find({ clerkUserId });
+    console.log(habits);
+    return JSON.parse(JSON.stringify(habits));
+  } catch (error) {
+    console.log(error);
+    return { message: "error fetching user habits" };
   }
 };
