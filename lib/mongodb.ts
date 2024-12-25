@@ -1,27 +1,25 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
-const uri = process.env.MONGODB_URI!;
+import mongoose, { Connection } from "mongoose";
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+let cachedConnection: Connection | null = null;
 
-async function run() {
+export async function connectToMongoDB() {
+  // If a cached connection exists, return it
+  if (cachedConnection) {
+    console.log("Using cached db connection");
+    return cachedConnection;
+  }
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    // If no cached connection exists, establish a new connection to MongoDB
+    const cnx = await mongoose.connect(process.env.MONGODB_URI!);
+    // Cache the connection for future use
+    cachedConnection = cnx.connection;
+    // Log message indicating a new MongoDB connection is established
+    console.log("New mongodb connection established");
+    // Return the newly established connection
+    return cachedConnection;
+  } catch (error) {
+    // If an error occurs during connection, log the error and throw it
+    console.log(error);
+    throw error;
   }
 }
-run().catch(console.dir);

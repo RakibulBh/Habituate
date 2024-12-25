@@ -1,30 +1,29 @@
 "use server";
+import { connectToMongoDB } from "@/lib/mongodb";
+import Habit from "@/models/Habit";
+import { revalidatePath } from "next/cache";
 
-import { IHabit } from "@/types";
-import { MongoClient } from "mongodb";
+interface FormDataType {
+  name: string;
+  frequency: string;
+  duration: string;
+  days: string[];
+}
 
-export default async function createHabit({
-  name,
-  frequency,
-  end,
-  days,
-  color,
-}: IHabit) {
-  const client = new MongoClient(process.env.MONGODB_URI!);
+export const createHabit = async (formData: FormDataType) => {
+  await connectToMongoDB();
 
   try {
-    await client.connect();
-
-    // Choose a name for your database
-    const database = client.db("user_habits");
-
-    // Choose a name for your collection
-    const collection = database.collection("habits");
-
-    await collection.insertOne({ name, frequency, end, days, color });
+    // Creating a new todo using Todo model
+    const newHabit = await Habit.create({ ...formData, end: new Date() });
+    // Saving the new Habit
+    newHabit.save();
+    // Triggering revalidation of the specified path ("/")
+    revalidatePath("/");
+    // Returning the string representation of the new Habit
+    return newHabit.toString();
   } catch (error) {
-    console.log({ message: "Something went wrong!" });
-  } finally {
-    await client.close();
+    console.log(error);
+    return { message: "error creating todo" };
   }
-}
+};

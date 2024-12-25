@@ -1,5 +1,5 @@
 "use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,7 @@ import { Duration, FrequencyType } from "@/types";
 import { Label } from "./ui/label";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { createHabit } from "@/app/actions";
 
 interface FormDataType {
   name: string;
@@ -97,9 +98,9 @@ const AddHabitDialog = () => {
     days: ["M", "W"],
   });
 
-  function onSubmit() {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    createHabit(formData);
   }
 
   return (

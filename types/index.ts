@@ -6,12 +6,11 @@ export type NavlinkType = {
 };
 
 export interface IHabit {
-  userId: string;
   name: string;
-  color: string;
-  frequency: "daily" | "weekly" | "monthly";
-  days: string;
-  end: Date | null;
+  color?: string;
+  frequency: "Daily" | "Weekly" | "Monthly";
+  days: string[];
+  end: Date;
 }
 
 export interface IUser {
