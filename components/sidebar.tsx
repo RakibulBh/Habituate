@@ -3,16 +3,26 @@ import React from "react";
 import Navlink from "./navlink";
 import { navLinks } from "@/constants";
 import AddHabitDialog from "./add-habit-dialog";
+import { useUser } from "@clerk/nextjs";
+import { Mail, Calendar } from "lucide-react";
 
 const Sidebar = () => {
+  const { isLoaded, isSignedIn, user } = useUser();
+
   return (
-    <div className="h-screen px-8 pb-12 w-72">
-      <div className="h-48" />
-      <div className="flex flex-col gap-4">
-        {navLinks.map((navLink, index: number) => (
-          <Navlink key={index} Icon={navLink.Icon} text={navLink.text} />
-        ))}
-        <AddHabitDialog />
+    <div className="h-screen w-64 px-4 pt-10 border border-textGray bg-primary space-y-4">
+      <div className="flex items-center gap-2 border border-textGray text-white px-4 py-3 rounded-md">
+        <div className="rounded-full w-5 h-5 bg-gray-100" />
+        <p>{user && user.firstName}</p>
+        <p>{!user && "First name"}</p>
+      </div>
+      <div className="p-2 text-white bg-accent rounded-md flex items-center gap-2">
+        <Mail />
+        <p>All habits</p>
+      </div>
+      <div className="p-2 text-white rounded-md flex items-center gap-2">
+        <Calendar />
+        <p>Calendar</p>
       </div>
     </div>
   );

@@ -117,9 +117,9 @@ const AddHabitDialog = () => {
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="p-4 flex items-center justify-start bg-primary text-white capitalize rounded-xl gap-2">
+        <div className="text-white flex items-center justify-center p-2 gap-2 rounded-md bg-accent">
           <Plus />
-          <p className="font-semibold">Add a habit</p>
+          <p>Add Habits</p>
         </div>
       </DialogTrigger>
       <DialogContent>
