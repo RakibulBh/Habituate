@@ -4,8 +4,6 @@ import HabitsContainer from "@/components/habits-container";
 import TopNav from "@/components/top-nav";
 import { useState } from "react";
 
-// TODO: WHEN HABIT GETS TICKED CREATE HABIT INSTANCE
-
 export default function Home() {
   const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
   console.log(currentDate);

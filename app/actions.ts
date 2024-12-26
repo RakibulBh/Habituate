@@ -1,5 +1,6 @@
 "use server";
 import { connectToMongoDB } from "@/lib/mongodb";
+import { setTimeToEndOfDay } from "@/lib/utils";
 import Habit from "@/models/Habit";
 import HabitInstance from "@/models/HabitInstance";
 import { IHabitDocument } from "@/types";
@@ -18,22 +19,17 @@ export const createHabit = async (
 ) => {
   await connectToMongoDB();
   try {
-    console.log("Clerk user id: ", clerkUserId);
-    // Creating a new todo using Todo model
     const newHabit = await Habit.create({
       ...formData,
       end: new Date(),
       clerkUserId,
     });
-    // Saving the new Habit
-    newHabit.save();
-    // Triggering revalidation of the specified path ("/")
+    await newHabit.save();
     revalidatePath("/");
-    // Returning the string representation of the new Habit
-    return newHabit.toString();
+    return { success: true, habit: JSON.parse(JSON.stringify(newHabit)) };
   } catch (error) {
-    console.log(error);
-    return { message: "error creating Habit" };
+    console.error(error);
+    return { success: false, message: "Error creating habit" };
   }
 };
 
@@ -61,28 +57,49 @@ export const manageHabitInstance = async ({
   await connectToMongoDB();
   try {
     if (!completionDate) {
-      return;
+      return { success: false, message: "Date is empty" };
     }
-    const foundHabitInstance = await HabitInstance.findOne({
+    const instance = await HabitInstance.findOne({
       habitId: habit._id,
+      completionDate: setTimeToEndOfDay(completionDate),
     });
-    console.log(foundHabitInstance);
-    if (foundHabitInstance) {
-      const deletedHabit = await HabitInstance.findByIdAndDelete({
-        _id: foundHabitInstance._id,
-      });
-      console.log("Habit instance deleted ", deletedHabit);
+
+    if (instance) {
+      await HabitInstance.deleteOne({ _id: instance._id });
     } else {
-      console.log("Not found habit so creating one");
-      const createdHabit = await HabitInstance.create({
+      await HabitInstance.create({
         habitId: habit._id,
         clerkUserId,
-        completionDate,
+        completionDate: setTimeToEndOfDay(completionDate),
       });
-      console.log("Created habit: ", createdHabit);
     }
+
+    revalidatePath("/");
+    return { success: true, isCompleted: !instance };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Error managing habit instance" };
+  }
+};
+
+export const isHabitInstance = async ({
+  habitId,
+  completionDate,
+}: {
+  habitId: string;
+  completionDate: Date | undefined;
+}) => {
+  await connectToMongoDB();
+  try {
+    if (!completionDate) {
+      return false;
+    }
+    const foundHabitInstance = await HabitInstance.findOne({
+      habitId,
+      completionDate: setTimeToEndOfDay(completionDate),
+    });
+    return !!foundHabitInstance;
   } catch (error) {
     console.log(error);
-    return { message: "error fetching user habits" };
   }
 };
