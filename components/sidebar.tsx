@@ -1,13 +1,10 @@
 "use client";
 import React from "react";
-import Navlink from "./navlink";
-import { navLinks } from "@/constants";
-import AddHabitDialog from "./add-habit-dialog";
 import { useUser } from "@clerk/nextjs";
 import { Mail, Calendar } from "lucide-react";
 
 const Sidebar = () => {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { user } = useUser();
 
   return (
     <div className="h-screen w-64 px-4 pt-10 border border-textGray bg-primary space-y-4">

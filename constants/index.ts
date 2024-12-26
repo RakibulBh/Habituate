@@ -1,4 +1,4 @@
-import { Duration, FrequencyType, NavlinkType } from "@/types";
+import { NavlinkType } from "@/types";
 import { Calendar, ChartBar, HomeIcon, Plus } from "lucide-react";
 
 // Form constants

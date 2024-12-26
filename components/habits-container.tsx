@@ -3,7 +3,6 @@ import { getHabits, isHabitInstance } from "@/app/actions";
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 import HabitComponent from "./HabitComponent";
-import { useRouter } from "next/navigation";
 import { IHabitDocument } from "@/types";
 
 const HabitsContainer = ({

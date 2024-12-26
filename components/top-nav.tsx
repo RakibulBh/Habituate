@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { Calendar, Droplet, Plus, Search, SortAsc } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Search, SortAsc } from "lucide-react";
 import AddHabitDialog from "./add-habit-dialog";
 import DaySelector from "./day-selector";
 
