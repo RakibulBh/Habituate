@@ -1,27 +1,20 @@
-import DayCarousel from "@/components/day-carousel";
+"use client";
 import Sidebar from "@/components/sidebar";
-import { useAuth } from "@clerk/nextjs";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { getHabits } from "./actions";
 import HabitsContainer from "@/components/habits-container";
 import TopNav from "@/components/top-nav";
+import { useState } from "react";
 
-export default async function Home() {
-  const { userId } = await auth();
+// TODO: WHEN HABIT GETS TICKED CREATE HABIT INSTANCE
 
-  if (userId) {
-    // Query DB for user specific information or display assets only to signed in users
-    console.log("Hi user!");
-  }
-
-  const user = await currentUser();
-
+export default function Home() {
+  const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
+  console.log(currentDate);
   return (
     <main className="bg-[#F8F8F8] h-screen flex">
       <Sidebar />
       <section className="flex-1 flex flex-col">
-        <TopNav />
-        <HabitsContainer />
+        <TopNav currentDate={currentDate} setCurrentDate={setCurrentDate} />
+        <HabitsContainer currentDate={currentDate} />
       </section>
     </main>
   );

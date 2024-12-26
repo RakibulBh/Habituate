@@ -1,10 +1,21 @@
 import { Date } from "mongoose";
+import { Types } from "mongoose";
+
+export type Duration = "15 days" | "30 days" | "60 days" | "90 days";
+export type FrequencyType = "Daily" | "Weekly" | "Monthly";
 
 export type NavlinkType = {
   Icon: React.FC;
   text: string;
 };
 
+// MONGO
+
+export interface IUser {
+  clerkUserId: string;
+  name: string;
+  email: string;
+}
 export interface IHabit {
   clerkUserId: string;
   name: string;
@@ -14,16 +25,19 @@ export interface IHabit {
   end: Date;
 }
 
-export interface IUser {
-  clerkUserId: string;
-  name: string;
-  email: string;
+export interface IHabitDocument extends IHabit, Document {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IHabitInstance {
-  habitId: string;
-  date: Date;
+  clerkUserId: string;
+  habitId: Types.ObjectId;
+  completionDate: Date;
 }
-
-export type Duration = "15 days" | "30 days" | "60 days" | "90 days";
-export type FrequencyType = "Daily" | "Weekly" | "Monthly";
+export interface IHabitInstanceDocument extends IHabitInstance, Document {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

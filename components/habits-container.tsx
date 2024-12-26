@@ -4,7 +4,11 @@ import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 import HabitComponent from "./HabitComponent";
 
-const HabitsContainer = () => {
+const HabitsContainer = ({
+  currentDate,
+}: {
+  currentDate: Date | undefined;
+}) => {
   const { isLoaded, isSignedIn, user } = useUser();
   const [habits, setHabits] = useState([]);
 
@@ -27,7 +31,7 @@ const HabitsContainer = () => {
   return (
     <div className="flex-1 bg-primary">
       {habits.map((habit, i) => (
-        <HabitComponent habit={habit} key={i} />
+        <HabitComponent currentDate={currentDate} habit={habit} key={i} />
       ))}
     </div>
   );

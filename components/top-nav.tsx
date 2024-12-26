@@ -1,15 +1,10 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Calendar, Droplet, Plus, Search, SortAsc } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AddHabitDialog from "./add-habit-dialog";
+import DaySelector from "./day-selector";
 
-const NavButton = ({
-  children,
-  main,
-}: {
-  children: React.ReactNode;
-  main?: boolean;
-}) => {
+export const NavButton = ({ children }: { children: React.ReactNode }) => {
   return (
     <button className="text-white flex items-center justify-center p-2 gap-2 rounded-md bg-buttonGray">
       {children}
@@ -17,7 +12,13 @@ const NavButton = ({
   );
 };
 
-const TopNav = () => {
+const TopNav = ({
+  currentDate,
+  setCurrentDate,
+}: {
+  currentDate: Date | undefined;
+  setCurrentDate: Dispatch<SetStateAction<Date | undefined>>;
+}) => {
   return (
     <div className="border border-textGray flex justify-between bg-primary items-center p-4">
       <h1 className="text-2xl text-white font-semibold">All habits</h1>
@@ -25,10 +26,10 @@ const TopNav = () => {
         <NavButton>
           <Search />
         </NavButton>
-        <NavButton>
-          <Calendar />
-          <p>December 13</p>
-        </NavButton>
+        <DaySelector
+          setCurrentDate={setCurrentDate}
+          currentDate={currentDate}
+        />
         <NavButton>
           <SortAsc />
           <p>My Habits Order</p>

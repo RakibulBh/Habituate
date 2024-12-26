@@ -1,4 +1,4 @@
-import { IHabit } from "@/types";
+import { IHabit, IHabitDocument } from "@/types";
 import type { Model } from "mongoose";
 import mongoose, { model } from "mongoose";
 
@@ -34,11 +34,6 @@ const HabitSchema = new mongoose.Schema<IHabit>(
     timestamps: true,
   }
 );
-
-export interface IHabitDocument extends IHabit, Document {
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 const Habit: Model<IHabitDocument> =
   mongoose.models?.Habit || mongoose.model("Habit", HabitSchema);
