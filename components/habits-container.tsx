@@ -24,7 +24,10 @@ const HabitsContainer = ({
 
       setIsLoading(true);
       try {
-        const fetchedHabits = await getHabits({ clerkUserId: user.id });
+        const fetchedHabits = await getHabits({
+          clerkUserId: user.id,
+          date: currentDate,
+        });
         if (!Array.isArray(fetchedHabits)) {
           console.error("Error fetching habits:", fetchedHabits.message);
           return;
@@ -59,6 +62,7 @@ const HabitsContainer = ({
     }
   }, [isLoaded, isSignedIn, user, currentDate]);
 
+  // This function updates the completed set accordingly to re render the components correctly.
   const updateHabitCompletion = (
     habitId: string,
     isCompleted: boolean | undefined
@@ -74,14 +78,14 @@ const HabitsContainer = ({
     });
   };
 
-  if (!isLoaded || !isSignedIn) return null;
+  if (!isLoaded || !isSignedIn) return null; // Do not show anything if user is not signed in
   if (isLoading)
     return <div className="flex-1 bg-primary space-y-8 animate-pulse" />;
 
   return (
     <div className="flex-1 bg-primary space-y-8">
       <div className="">
-        {habits
+        {habits // filter all the habits that are NOT on the completed set and then render each one.
           .filter((habit) => !completedHabits.has(habit._id))
           .map((habit) => (
             <HabitComponent
@@ -95,7 +99,7 @@ const HabitsContainer = ({
       </div>
       <div className="">
         <h1 className="text-white text-2xl font-semibold ml-8">Completed</h1>
-        {habits
+        {habits // filter all the habits that ARE on the completed set and then render each one.
           .filter((habit) => completedHabits.has(habit._id))
           .map((habit) => (
             <HabitComponent

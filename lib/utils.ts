@@ -36,3 +36,30 @@ export function setTimeToEndOfDay(dateString: Date) {
     return null; // Return null on error
   }
 }
+
+export function generateDateJson(
+  date: Date
+): { dayOfMonth: string; dayOfWeek: string } | null {
+  try {
+    // Check if the input is a valid Date object
+    if (!(date instanceof Date)) {
+      throw new Error("Invalid date");
+    }
+
+    // Array of weekday abbreviations
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    // Extract day of the month and day of the week
+    const dayOfMonth = date.getUTCDate().toString(); // Convert to string
+    const dayOfWeek = daysOfWeek[date.getUTCDay()]; // Already a string
+
+    // Return the JSON object
+    return {
+      dayOfMonth,
+      dayOfWeek,
+    };
+  } catch (error) {
+    console.error(error);
+    return null; // Return null on error
+  }
+}

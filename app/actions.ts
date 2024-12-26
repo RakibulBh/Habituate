@@ -1,6 +1,6 @@
 "use server";
 import { connectToMongoDB } from "@/lib/mongodb";
-import { setTimeToEndOfDay } from "@/lib/utils";
+import { generateDateJson, setTimeToEndOfDay } from "@/lib/utils";
 import Habit from "@/models/Habit";
 import HabitInstance from "@/models/HabitInstance";
 import { IHabitDocument } from "@/types";
@@ -33,12 +33,37 @@ export const createHabit = async (
   }
 };
 
-export const getHabits = async ({ clerkUserId }: { clerkUserId: string }) => {
+export const getHabits = async ({
+  clerkUserId,
+  date,
+}: {
+  clerkUserId: string;
+  date: Date | undefined;
+}) => {
   await connectToMongoDB();
   try {
+    if (!date) {
+      return { success: false, message: "Date is empty" };
+    }
+
+    const formattedDate = generateDateJson(date);
+
+    if (!formattedDate) {
+      return { success: false, message: "Failed to format date" };
+    }
+
+    const { dayOfMonth, dayOfWeek } = formattedDate;
+
     const habits = await Habit.find({ clerkUserId });
-    console.log(habits);
-    return JSON.parse(JSON.stringify(habits));
+
+    // Filter habits based on dayOfMonth or dayOfWeek
+    const filteredHabits = habits.filter(
+      (habit) =>
+        habit.days.includes(dayOfMonth) || habit.days.includes(dayOfWeek)
+    );
+
+    console.log(filteredHabits);
+    return JSON.parse(JSON.stringify(filteredHabits));
   } catch (error) {
     console.log(error);
     return { message: "error fetching user habits" };
