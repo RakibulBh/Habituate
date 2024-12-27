@@ -13,11 +13,11 @@ import { DAYS, DURATIONS, FREQUENCY, WEEKDAYS } from "@/constants";
 import { Duration, FrequencyType } from "@/types";
 import { Label } from "./ui/label";
 import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
 import { createHabit } from "@/app/actions";
 import { useAuth } from "@clerk/nextjs";
+import DaySelector from "./day-selector";
 
-interface FormDataType {
+export interface FormDataType {
   name: string;
   frequency: string;
   duration: string;
@@ -37,51 +37,21 @@ const SelectOption = ({
   setFormData: Dispatch<SetStateAction<FormDataType>>;
   value: Duration | FrequencyType;
 }) => {
-  return (
-    <div
-      onClick={() => {
-        type === "frequency"
-          ? setFormData({ ...formData, frequency: value, days: [] })
-          : setFormData({ ...formData, duration: value });
-      }}
-      className={cn(
-        "rounded-xl py-2 px-4 border hover:cursor-pointer",
-        formValue === value
-          ? "bg-primary text-white border-transparent"
-          : "bg-white border-primary text-primary"
-      )}
-    >
-      <p>{value}</p>
-    </div>
-  );
-};
-
-const DaySelector = ({
-  value,
-  setFormData,
-  formData,
-}: {
-  value: string;
-  setFormData: Dispatch<SetStateAction<FormDataType>>;
-  formData: FormDataType;
-}) => {
-  const onClick = () => {
-    if (formData.days.includes(value)) {
-      setFormData({
-        ...formData,
-        days: formData.days.filter((val) => val !== value),
-      });
+  const handleClick = () => {
+    if (type === "frequency") {
+      setFormData({ ...formData, frequency: value, days: [] });
     } else {
-      setFormData({ ...formData, days: [...formData.days, value] });
+      setFormData({ ...formData, duration: value });
     }
+    return;
   };
 
   return (
     <div
-      onClick={onClick}
+      onClick={handleClick}
       className={cn(
-        "p-2 rounded-md hover:cursor-pointer flex items-center justify-center",
-        formData.days.includes(value)
+        "rounded-xl py-2 px-4 border hover:cursor-pointer",
+        formValue === value
           ? "bg-primary text-white border-transparent"
           : "bg-white border-primary text-primary"
       )}
@@ -186,7 +156,9 @@ const AddHabitDialog = () => {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button>Submit</Button>
+            <button className="text-white bg-primary p-4 rounded-md hover:bg-opacity-75 transition-opacity duration-75 ease-in-out">
+              Submit
+            </button>
           </div>
         </form>
       </DialogContent>

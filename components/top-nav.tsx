@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Search, SortAsc } from "lucide-react";
 import AddHabitDialog from "./add-habit-dialog";
-import DaySelector from "./day-selector";
+import CalendarDaySelector from "./calendar-day-selector";
 
 export const NavButton = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -25,7 +25,7 @@ const TopNav = ({
         <NavButton>
           <Search />
         </NavButton>
-        <DaySelector
+        <CalendarDaySelector
           setCurrentDate={setCurrentDate}
           currentDate={currentDate}
         />
